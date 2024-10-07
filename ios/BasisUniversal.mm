@@ -1,21 +1,16 @@
 #import "BasisUniversal.h"
+#include "react-native-basis-universal.h"
+#include <ReactCommon/CxxTurboModuleUtils.h>
+#include <RNBasisUniversalSpecJSI.h>
 
 @implementation BasisUniversal
-RCT_EXPORT_MODULE()
 
-// Don't compile this code when we build for the old architecture.
-#ifdef RCT_NEW_ARCH_ENABLED
-- (NSNumber *)multiply:(double)a b:(double)b {
-    NSNumber *result = @(basisuniversal::multiply(a, b));
-
-    return result;
++ (void)load {
+  facebook::react::registerCxxModuleToGlobalModuleMap(
+  std::string(facebook::react::ReactNativeBasisUniversal::kModuleName),
+  [&](std::shared_ptr<facebook::react::CallInvoker> jsInvoker) {
+  return std::make_shared<facebook::react::ReactNativeBasisUniversal>(jsInvoker);
+});
 }
-
-- (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:
-    (const facebook::react::ObjCTurboModule::InitParams &)params
-{
-    return std::make_shared<facebook::react::NativeBasisUniversalSpecJSI>(params);
-}
-#endif
 
 @end

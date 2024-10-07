@@ -1,5 +1,5 @@
 {
-  "name": "react-native-basis-universal",
+  "name": "@callstack/react-native-basis-universal",
   "version": "0.1.0",
   "description": "Basis Universal GPU Texture Codec",
   "source": "./src/index.tsx",

@@ -2,7 +2,7 @@
   "compilerOptions": {
     "rootDir": ".",
     "paths": {
-      "react-native-basis-universal": ["./src/index"]
+      "@callstack/react-native-basis-universal": ["./src/index"]
     },
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,

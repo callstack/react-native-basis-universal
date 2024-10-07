@@ -8,4 +8,9 @@ require "#{ws_dir}/node_modules/react-native-test-app/test_app.rb"
 
 workspace 'BasisUniversalExample.xcworkspace'
 
-use_test_app!
+options = {
+  :fabric_enabled => true,
+  :bridgeless_enabled => true,
+}
+
+use_test_app! options

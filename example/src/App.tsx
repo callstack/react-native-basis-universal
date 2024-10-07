@@ -1,5 +1,5 @@
 import { StyleSheet, View, Text } from 'react-native';
-import { multiply } from 'react-native-basis-universal';
+import { multiply } from '@callstack/react-native-basis-universal';
 
 const result = multiply(3, 7);
 

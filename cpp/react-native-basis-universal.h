@@ -1,8 +1,22 @@
-#ifndef BASISUNIVERSAL_H
-#define BASISUNIVERSAL_H
+#pragma once
 
-namespace basisuniversal {
-  double multiply(double a, double b);
-}
+#include <ReactCommon/TurboModule.h>
+#include <RNBasisUniversalSpecJSI.h>
 
-#endif /* BASISUNIVERSAL_H */
+namespace facebook::react {
+
+using namespace facebook;
+
+class ReactNativeBasisUniversal : public NativeBasisUniversalCxxSpecJSI {
+public:
+  explicit ReactNativeBasisUniversal(std::shared_ptr<CallInvoker> jsInvoker);
+
+public:
+  double multiply(jsi::Runtime &rt, double a, double b) override;
+  constexpr static auto kModuleName = "BasisUniversal";
+
+private:
+  std::shared_ptr<CallInvoker> _callInvoker;
+};
+
+} // namespace facebook::react
