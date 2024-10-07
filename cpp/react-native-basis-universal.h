@@ -2,6 +2,7 @@
 
 #include <ReactCommon/TurboModule.h>
 #include <RNBasisUniversalSpecJSI.h>
+#include "basisu/transcoder/basisu_transcoder.h"
 
 namespace facebook::react {
 
