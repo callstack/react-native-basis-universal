@@ -1,0 +1,20 @@
+filegroup(
+  name = "srcs",
+  srcs = glob(["encoder/**/*.cpp", "transcoder/*.cpp", "encoder/*.cpp", "transcoder/*.h", "encoder/*.h", "encoder/3rdparty/*.h", "zstd/*"]),
+  visibility = ["//visibility:public"],
+)
+
+cc_library(
+  name = "basis_universal",
+  hdrs = glob(["encoder/*.h", "transcoder/*.h"]),
+  srcs = [":srcs"],
+  copts = [
+    "-DBASISU_SUPPORT_SSE=1",
+    "-msse4.1",
+    "-Iencoder/3rdparty"
+  ],
+  defines = [
+    "BASISD_SUPPORT_KTX2_ZSTD"
+  ],
+  linkopts = ["-lpthread"],
+)
