@@ -26,7 +26,7 @@ filegroup(
 copy_to_directory(
   name = "copy_headers",
   srcs = [":headers"],
-  out = "./basis_headers"
+  out = "Headers"
 )
 
 cc_library(
