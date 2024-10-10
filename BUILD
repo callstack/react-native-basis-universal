@@ -9,6 +9,5 @@ apple_static_xcframework(
   },
   minimum_os_versions = {
     "ios": "11.0"
-  },
-  public_hdrs = ["@basis_universal//:headers"],
+  }
 )

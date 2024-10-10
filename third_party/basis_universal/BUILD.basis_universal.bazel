@@ -1,3 +1,5 @@
+load("@aspect_bazel_lib//lib:copy_to_directory.bzl", "copy_to_directory")
+
 filegroup(
   name = "srcs",
   srcs = glob([
@@ -21,10 +23,16 @@ filegroup(
   visibility = ["//visibility:public"],
 )
 
+copy_to_directory(
+  name = "copy_headers",
+  srcs = [":headers"],
+  out = "./basis_headers"
+)
+
 cc_library(
   name = "basis_universal",
   hdrs = [":headers"],
-  srcs = [":srcs"],
+  srcs = [":srcs", ":copy_headers"],
   textual_hdrs = glob(["transcoder/*.inc"]),
   copts = [
     # "-DBASISU_SUPPORT_SSE=1",
