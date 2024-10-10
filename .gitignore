@@ -31,6 +31,7 @@ project.xcworkspace
 cpp/basisu
 example/ios/.xcode.env
 example/ios/*/content.xcworkspacedata
+ios/libs/*
 
 # Android/IJ
 #
