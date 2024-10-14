@@ -28,6 +28,9 @@ DerivedData
 *.ipa
 *.xcuserstate
 project.xcworkspace
+cpp/basisu
+example/ios/.xcode.env
+example/ios/*/content.xcworkspacedata
 
 # Android/IJ
 #
@@ -39,6 +42,7 @@ project.xcworkspace
 .settings
 local.properties
 android.iml
+bazel-*
 
 # Cocoapods
 #

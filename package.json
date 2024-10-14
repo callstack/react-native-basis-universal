@@ -2,9 +2,10 @@
   "name": "@callstack/react-native-basis-universal",
   "version": "0.1.0",
   "description": "Basis Universal GPU Texture Codec",
-  "source": "./src/index.tsx",
+  "source": "./src/index.ts",
   "main": "./lib/commonjs/index.js",
   "module": "./lib/module/index.js",
+  "types": "./lib/typescript/module/src/index.d.ts",
   "exports": {
     ".": {
       "import": {
@@ -39,6 +40,7 @@
     "example": "yarn workspace react-native-basis-universal-example",
     "test": "jest",
     "typecheck": "tsc",
+    "build-basis": "ts-node ./scripts/build.ts",
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
     "clean": "del-cli android/build example/android/build example/android/app/build example/ios/build lib",
     "prepare": "bob build",
@@ -80,8 +82,10 @@
     "react-native": "0.75.4",
     "react-native-builder-bob": "^0.30.2",
     "release-it": "^15.0.0",
+    "ts-node": "^10.9.2",
     "turbo": "^1.10.7",
-    "typescript": "^5.2.2"
+    "typescript": "^5.2.2",
+    "zx": "^8.1.9"
   },
   "resolutions": {
     "@types/react": "^18.2.44"

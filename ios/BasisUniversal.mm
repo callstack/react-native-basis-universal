@@ -1,7 +1,5 @@
 #import "BasisUniversal.h"
-#include "react-native-basis-universal.h"
 #include <ReactCommon/CxxTurboModuleUtils.h>
-#include <RNBasisUniversalSpecJSI.h>
 
 @implementation BasisUniversal
 

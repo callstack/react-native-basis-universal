@@ -1,0 +1,5 @@
+framework module rn_basis_universal {
+  export *
+  module * { export * }
+  link "pthread"
+}
