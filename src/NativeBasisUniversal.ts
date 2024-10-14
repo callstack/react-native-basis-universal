@@ -1,8 +1,41 @@
 import type { TurboModule } from 'react-native';
 import { TurboModuleRegistry } from 'react-native';
+import type {
+  UnsafeObject,
+  Int32,
+} from 'react-native/Libraries/Types/CodegenTypes';
+
+export type OpaqueNativeBasisHandle = UnsafeObject;
 
 export interface Spec extends TurboModule {
-  multiply(a: number, b: number): number;
+  // Basis
+  initializeBasis: () => void;
+
+  createBasisHandle: () => OpaqueNativeBasisHandle;
+
+  // BasisEncoder
+  setCreateKTX2File: (handle: OpaqueNativeBasisHandle, flag: boolean) => void;
+  setDebug: (handle: OpaqueNativeBasisHandle, flag: boolean) => void;
+  setComputeStats: (handle: OpaqueNativeBasisHandle, flag: boolean) => void;
+  setUASTC: (handle: OpaqueNativeBasisHandle, flag: boolean) => void;
+  setCompressionLevel: (handle: OpaqueNativeBasisHandle, level: Int32) => void;
+  setSliceSourceImage: (
+    handle: OpaqueNativeBasisHandle,
+    sliceIndex: Int32,
+    imageArray: UnsafeObject,
+    width: Int32,
+    height: Int32,
+    isPng: boolean
+  ) => void;
+  setKTX2UASTCSupercompression: (
+    handle: OpaqueNativeBasisHandle,
+    flag: boolean
+  ) => void;
+  setPackUASTCFlags: (handle: OpaqueNativeBasisHandle, flags: Int32) => void;
+  setQualityLevel: (
+    handle: OpaqueNativeBasisHandle,
+    qualityLevel: Int32
+  ) => void;
 }
 
 export default TurboModuleRegistry.getEnforcing<Spec>('BasisUniversal');
