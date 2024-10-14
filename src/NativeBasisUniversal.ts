@@ -1,4 +1,4 @@
-import type { TurboModule } from 'react-native';
+import type { Handle, TurboModule } from 'react-native';
 import { TurboModuleRegistry } from 'react-native';
 import type {
   UnsafeObject,
@@ -26,7 +26,11 @@ export interface Spec extends TurboModule {
     width: Int32,
     height: Int32,
     isPng: boolean
-  ) => void;
+  ) => boolean;
+  encode: (
+    handle: OpaqueNativeBasisHandle,
+    basisFileData: UnsafeObject
+  ) => Int32;
   setKTX2UASTCSupercompression: (
     handle: OpaqueNativeBasisHandle,
     flag: boolean

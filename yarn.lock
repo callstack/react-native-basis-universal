@@ -10845,10 +10845,21 @@ __metadata:
     "@rnx-kit/metro-config": ^2.0.0
     react: 18.3.1
     react-native: 0.75.4
+    react-native-blob-jsi-helper: ^0.3.1
     react-native-builder-bob: ^0.30.2
     react-native-test-app: ^3.10.14
   languageName: unknown
   linkType: soft
+
+"react-native-blob-jsi-helper@npm:^0.3.1":
+  version: 0.3.1
+  resolution: "react-native-blob-jsi-helper@npm:0.3.1"
+  peerDependencies:
+    react: "*"
+    react-native: ">=0.71.0"
+  checksum: adebe9659fea76a788ed8ab4edb31166e4304ddd9e3faf9fa7f2dc0030f39144ea12d6e6ea64dc9143bde30023897d2e829aa9e6d93454c78e5230ce6a4cd99b
+  languageName: node
+  linkType: hard
 
 "react-native-builder-bob@npm:^0.30.2":
   version: 0.30.2

@@ -50,13 +50,13 @@ export class BasisEncoder {
     width: Int32,
     height: Int32,
     isPng: boolean
-  ) {
+  ): boolean {
     console.log('setSliceSourceImage');
-
     if (this.#nativeBasisHandle == null) {
-      return;
+      return false;
     }
-    NativeBasisUniversal.setSliceSourceImage(
+
+    return NativeBasisUniversal.setSliceSourceImage(
       this.#nativeBasisHandle,
       sliceIndex,
       imageArray,

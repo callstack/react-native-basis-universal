@@ -28,10 +28,10 @@ public:
   void setUASTC(jsi::Runtime &rt, jsi::Object handle, bool flag) override;
   void setCompressionLevel(jsi::Runtime &rt, jsi::Object handle, int level) override;
   void setKTX2UASTCSupercompression(jsi::Runtime &rt, jsi::Object handle, bool flag) override;
-  void setSliceSourceImage(jsi::Runtime &rt, jsi::Object handle, int sliceIndex, jsi::Object imageArray, int width, int height, bool isPng) override;
+  bool setSliceSourceImage(jsi::Runtime &rt, jsi::Object handle, int sliceIndex, jsi::Object imageArray, int width, int height, bool isPng) override;
   void setPackUASTCFlags(jsi::Runtime &rt, jsi::Object handle, int flags) override;
   void setQualityLevel(jsi::Runtime &rt, jsi::Object handle, int qualityLevel) override;
-
+  int encode(jsi::Runtime &rt, jsi::Object handle, jsi::Object basisFileData) override;
 
 private:
   std::shared_ptr<CallInvoker> _callInvoker;
