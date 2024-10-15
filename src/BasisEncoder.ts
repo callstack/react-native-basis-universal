@@ -19,8 +19,15 @@ export class BasisEncoder {
     return NativeBasisUniversal.createBasisHandle();
   }
 
-  encode() {
-    console.log('encode');
+  encode(basisFileData: Uint8Array): Int32 {
+    if (this.#nativeBasisHandle == null) {
+      return 0;
+    }
+
+    return NativeBasisUniversal.encode(
+      this.#nativeBasisHandle,
+      basisFileData.buffer
+    );
   }
 
   setCreateKTX2File(flag: boolean) {
@@ -59,7 +66,7 @@ export class BasisEncoder {
     return NativeBasisUniversal.setSliceSourceImage(
       this.#nativeBasisHandle,
       sliceIndex,
-      imageArray,
+      imageArray.buffer,
       width,
       height,
       isPng
@@ -105,34 +112,55 @@ export class BasisEncoder {
   }
 
   setPerceptual(flag: boolean) {
-    console.log('setPerceptual', flag);
+    if (this.#nativeBasisHandle == null) {
+      return;
+    }
+    NativeBasisUniversal.setPerceptual(this.#nativeBasisHandle, flag);
   }
 
   setMipSRGB(flag: boolean) {
-    console.log('setMipSRGB', flag);
+    if (this.#nativeBasisHandle == null) {
+      return;
+    }
+    NativeBasisUniversal.setMipSRGB(this.#nativeBasisHandle, flag);
   }
 
   setKTX2SRGBTransferFunc(flag: boolean) {
-    console.log('setKTX2SRGBTransferFunc', flag);
+    if (this.#nativeBasisHandle == null) {
+      return;
+    }
+    NativeBasisUniversal.setMipSRGB(this.#nativeBasisHandle, flag);
   }
 
   setNormalMap() {
-    console.log('setNormalMap');
+    if (this.#nativeBasisHandle == null) {
+      return;
+    }
+    NativeBasisUniversal.setNormalMap(this.#nativeBasisHandle);
   }
 
   setMipRenormalize(flag: boolean) {
-    console.log('setMipRenormalize', flag);
+    if (this.#nativeBasisHandle == null) {
+      return;
+    }
+    NativeBasisUniversal.setMipRenormalize(this.#nativeBasisHandle, flag);
   }
 
   setYFlip(flag: boolean) {
-    console.log('setYFlip', flag);
+    if (this.#nativeBasisHandle == null) {
+      return;
+    }
+    NativeBasisUniversal.setYFlip(this.#nativeBasisHandle, flag);
   }
 
   setMipGen(flag: boolean) {
-    console.log('setMipGen', flag);
+    if (this.#nativeBasisHandle == null) {
+      return;
+    }
+    NativeBasisUniversal.setMipGen(this.#nativeBasisHandle, flag);
   }
 
   delete() {
-    console.log('delete');
+    this.#nativeBasisHandle = null;
   }
 }

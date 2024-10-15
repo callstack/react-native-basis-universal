@@ -1,4 +1,4 @@
-import type { Handle, TurboModule } from 'react-native';
+import type { TurboModule } from 'react-native';
 import { TurboModuleRegistry } from 'react-native';
 import type {
   UnsafeObject,
@@ -40,6 +40,17 @@ export interface Spec extends TurboModule {
     handle: OpaqueNativeBasisHandle,
     qualityLevel: Int32
   ) => void;
+  setPerceptual: (handle: OpaqueNativeBasisHandle, flag: boolean) => void;
+  setMipSRGB: (handle: OpaqueNativeBasisHandle, flag: boolean) => void;
+  setKTX2SRGBTransferFunc: (
+    handle: OpaqueNativeBasisHandle,
+    flag: boolean
+  ) => void;
+
+  setNormalMap: (handle: OpaqueNativeBasisHandle) => void;
+  setMipRenormalize: (handle: OpaqueNativeBasisHandle, flag: boolean) => void;
+  setYFlip: (handle: OpaqueNativeBasisHandle, flag: boolean) => void;
+  setMipGen: (handle: OpaqueNativeBasisHandle, flag: boolean) => void;
 }
 
 export default TurboModuleRegistry.getEnforcing<Spec>('BasisUniversal');

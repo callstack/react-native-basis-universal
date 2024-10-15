@@ -11,6 +11,7 @@ workspace 'BasisUniversalExample.xcworkspace'
 options = {
   :fabric_enabled => true,
   :bridgeless_enabled => true,
+  :hermes_enabled => true,
 }
 
 use_test_app! options

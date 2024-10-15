@@ -32,6 +32,14 @@ public:
   void setPackUASTCFlags(jsi::Runtime &rt, jsi::Object handle, int flags) override;
   void setQualityLevel(jsi::Runtime &rt, jsi::Object handle, int qualityLevel) override;
   int encode(jsi::Runtime &rt, jsi::Object handle, jsi::Object basisFileData) override;
+  void setPerceptual(jsi::Runtime &rt, jsi::Object handle, bool flag) override;
+  void setYFlip(jsi::Runtime &rt, jsi::Object handle, bool flag) override;
+  void setMipGen(jsi::Runtime &rt, jsi::Object handle, bool flag) override;
+  void setNormalMap(jsi::Runtime &rt, jsi::Object handle) override;
+  void setKTX2SRGBTransferFunc(jsi::Runtime &rt, jsi::Object handle, bool flag) override;
+  void setMipSRGB(jsi::Runtime &rt, jsi::Object handle, bool flag) override;
+  void setMipRenormalize(jsi::Runtime &rt, jsi::Object handle, bool flag) override;
+  
 
 private:
   std::shared_ptr<CallInvoker> _callInvoker;

@@ -34,7 +34,8 @@
     "!**/__tests__",
     "!**/__fixtures__",
     "!**/__mocks__",
-    "!**/.*"
+    "!**/.*",
+    "!bazel-*"
   ],
   "scripts": {
     "example": "yarn workspace react-native-basis-universal-example",
@@ -162,7 +163,6 @@
     "source": "src",
     "output": "lib",
     "targets": [
-      "codegen",
       [
         "commonjs",
         {
