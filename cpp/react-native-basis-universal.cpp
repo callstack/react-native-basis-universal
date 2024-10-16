@@ -27,7 +27,7 @@ std::shared_ptr<BasisEncoder> tryGetBasisEncoder(jsi::Runtime& rt, jsi::Object& 
 }
 
 ReactNativeBasisUniversal::ReactNativeBasisUniversal(std::shared_ptr<CallInvoker> jsInvoker)
-: NativeBasisUniversalCxxSpecJSI(jsInvoker), _callInvoker(jsInvoker) {}
+: NativeBasisUniversalCxxSpecJSI(jsInvoker) {}
 
 void ReactNativeBasisUniversal::initializeBasis(jsi::Runtime &rt)
 {
