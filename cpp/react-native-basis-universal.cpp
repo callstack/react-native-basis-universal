@@ -101,11 +101,15 @@ int ReactNativeBasisUniversal::encode(jsi::Runtime &rt, jsi::Object handle, jsi:
   {
     // Compression succeeded, so copy the .ktx2 file bytes to the caller's buffer.
     auto output = comp.get_output_basis_file();
-    data = reinterpret_cast<uint8_t*>(output.data());
     
     if (!data) {
       return 0;
     }
+    
+    auto outputBuffer = jsi::ArrayBuffer(std::move(arrayBuffer));
+    memcpy(outputBuffer.data(rt), output.data(), output.size());
+    basisFileData.setProperty(rt, jsi::PropNameID::forAscii(rt, "buffer"), outputBuffer);
+
     
     // Return the file size of the .basis file in bytes.
     return (uint32_t)comp.get_output_ktx2_file().size();
@@ -114,12 +118,14 @@ int ReactNativeBasisUniversal::encode(jsi::Runtime &rt, jsi::Object handle, jsi:
   {
     auto output = comp.get_output_basis_file();
     
-    // Compression succeeded, so copy the .basis file bytes to the caller's buffer.
-    data = reinterpret_cast<uint8_t*>(output.data());
-    
     if (!data) {
       return 0;
     }
+    
+    // Compression succeeded, so copy the .basis file bytes to the caller's buffer.
+    auto outputBuffer = jsi::ArrayBuffer(std::move(arrayBuffer));
+    memcpy(outputBuffer.data(rt), output.data(), output.size());
+    basisFileData.setProperty(rt, jsi::PropNameID::forAscii(rt, "buffer"), outputBuffer);
     
     // Return the file size of the .basis file in bytes.
     return (uint32_t)comp.get_output_basis_file().size();
@@ -166,13 +172,11 @@ bool ReactNativeBasisUniversal::setSliceSourceImage(jsi::Runtime &rt, jsi::Objec
   }
   else
   {
-//    auto arrayBufferSize = arrayBuffer.size(rt);
-//    auto expectedSize = width * height * sizeof(uint32_t);
     // It's a raw image, so check the buffer's size.
-//    if (arrayBuffer.size(rt) != width * height * sizeof(uint32_t))
-//    {
-//      return false;
-//    }
+    if (arrayBuffer.size(rt) != width * height * sizeof(uint32_t))
+    {
+      return false;
+    }
     
     // Copy the raw image's data into our source image.
     src_img.resize(width, height);
@@ -180,6 +184,31 @@ bool ReactNativeBasisUniversal::setSliceSourceImage(jsi::Runtime &rt, jsi::Objec
   }
   
   return true;
+}
+
+bool ReactNativeBasisUniversal::setSliceSourceImageHDR(jsi::Runtime &rt, jsi::Object handle, int sliceIndex, jsi::Object imageArray, int width, int height, int imgType, bool ldrSrgbToLinear) {
+  if (!imageArray.isArrayBuffer(rt)) {
+    throw jsi::JSError(rt, "Image Array needs to be ArrayBuffer");
+  }
+  auto encoder = tryGetBasisEncoder(rt, handle);
+  
+  auto arrayBuffer = imageArray.getArrayBuffer(rt);
+  auto data = arrayBuffer.data(rt);
+
+  // Resize the source_images_hdr array if necessary
+  if (sliceIndex >= encoder->m_params.m_source_images_hdr.size())
+    encoder->m_params.m_source_images_hdr.resize(sliceIndex + 1);
+  
+  // Now load the source image.
+  imagef& src_img = encoder->m_params.m_source_images_hdr[sliceIndex];
+ 
+  return load_image_hdr(data,
+                        arrayBuffer.size(rt),
+                        src_img,
+                        width,
+                        height,
+                        (hdr_image_type)imgType,
+                        ldrSrgbToLinear);
 }
 
 void ReactNativeBasisUniversal::setPackUASTCFlags(jsi::Runtime &rt, jsi::Object handle, int flags) {

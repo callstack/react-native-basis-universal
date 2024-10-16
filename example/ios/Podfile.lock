@@ -1548,6 +1548,8 @@ PODS:
     - React-Core
     - React-jsi
   - ReactTestApp-Resources (1.0.0-dev)
+  - RNFS (2.20.0):
+    - React-Core
   - SocketRocket (0.7.0)
   - Yoga (0.0.0)
 
@@ -1620,6 +1622,7 @@ DEPENDENCIES:
   - "ReactNativeHost (from `../node_modules/@rnx-kit/react-native-host`)"
   - ReactTestApp-DevSupport (from `../node_modules/react-native-test-app`)
   - ReactTestApp-Resources (from `..`)
+  - RNFS (from `../node_modules/react-native-fs`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
@@ -1760,6 +1763,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-test-app"
   ReactTestApp-Resources:
     :path: ".."
+  RNFS:
+    :path: "../node_modules/react-native-fs"
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
@@ -1830,6 +1835,7 @@ SPEC CHECKSUMS:
   ReactNativeHost: a27bb5af1c4d73dd3e80cc7ce295407f414e0e8c
   ReactTestApp-DevSupport: ed439cce949caf074af3ae05051b4bd157ed4019
   ReactTestApp-Resources: 7db90c026cccdf40cfa495705ad436ccc4d64154
+  RNFS: 4ac0f0ea233904cb798630b3c077808c06931688
   SocketRocket: abac6f5de4d4d62d24e11868d7a2f427e0ef940d
   Yoga: 055f92ad73f8c8600a93f0e25ac0b2344c3b07e6
 

@@ -27,6 +27,15 @@ export interface Spec extends TurboModule {
     height: Int32,
     isPng: boolean
   ) => boolean;
+  setSliceSourceImageHDR: (
+    handle: OpaqueNativeBasisHandle,
+    sliceIndex: Int32,
+    imageArray: UnsafeObject,
+    width: Int32,
+    height: Int32,
+    imgType: Int32,
+    ldrSrgbToLinear: boolean
+  ) => boolean;
   encode: (
     handle: OpaqueNativeBasisHandle,
     basisFileData: UnsafeObject

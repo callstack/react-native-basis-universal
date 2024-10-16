@@ -13,6 +13,7 @@ import {
   BasisEncoder,
 } from '@callstack/react-native-basis-universal';
 import { getArrayBufferForBlob } from 'react-native-blob-jsi-helper';
+import RNFS from 'react-native-fs';
 
 function arrayBufferToBase64(buffer: Uint8Array): string {
   let binary = '';
@@ -76,11 +77,12 @@ const BasisEncoderPlayground = () => {
       basisEncoder.setCreateKTX2File(true);
       basisEncoder.setDebug(false);
       basisEncoder.setComputeStats(false);
-      basisEncoder.setSliceSourceImage(
+      basisEncoder.setSliceSourceImageHDR(
         0,
         image,
         imageWidth,
         imageHeight,
+        3,
         false
       );
       basisEncoder.setUASTC(options.uastc);
@@ -111,10 +113,18 @@ const BasisEncoderPlayground = () => {
       basisEncoder.setMipGen(options.mipmaps);
 
       console.log(`Starting encode with ${imageWidth}x${imageHeight} image`);
-      const t0 = performance.now();
+
       const basisFileData = new Uint8Array(imageWidth * imageHeight * 4);
+      console.log('basisFileData hash before:', basisFileData.slice(0, 100));
+      const t0 = performance.now();
+      console.log(
+        'basisFileData byteLength before: ',
+        basisFileData.buffer.byteLength
+      );
       const numOutputBytes = basisEncoder.encode(basisFileData);
       const t1 = performance.now();
+
+      console.log('basisFileData hash after:', basisFileData.slice(0, 100));
 
       console.log(
         `Call to basisEncoder.encode took ${(t1 - t0) / 1000} seconds.`
@@ -126,6 +136,12 @@ const BasisEncoderPlayground = () => {
         0,
         numOutputBytes
       );
+
+      const path = RNFS.DocumentDirectoryPath + '/output.ktx2';
+      console.log(path);
+
+      const base64Data = arrayBufferToBase64(actualKTX2FileData);
+      await RNFS.writeFile(path, base64Data, 'base64');
 
       console.log('actualKTX2FileData', actualKTX2FileData.buffer.byteLength);
     } catch (error) {

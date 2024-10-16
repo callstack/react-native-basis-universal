@@ -39,6 +39,7 @@ public:
   void setKTX2SRGBTransferFunc(jsi::Runtime &rt, jsi::Object handle, bool flag) override;
   void setMipSRGB(jsi::Runtime &rt, jsi::Object handle, bool flag) override;
   void setMipRenormalize(jsi::Runtime &rt, jsi::Object handle, bool flag) override;
+  bool setSliceSourceImageHDR(jsi::Runtime &rt, jsi::Object handle, int sliceIndex, jsi::Object imageArray, int width, int height, int imgType, bool ldrSrgbToLinear) override;
   
 
 private:

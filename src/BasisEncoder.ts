@@ -51,6 +51,29 @@ export class BasisEncoder {
     NativeBasisUniversal.setComputeStats(this.#nativeBasisHandle, flag);
   }
 
+  setSliceSourceImageHDR(
+    sliceIndex: Int32,
+    imageArray: Uint8Array,
+    width: Int32,
+    height: Int32,
+    imgType: Int32,
+    ldrSrgbToLinear: boolean
+  ): boolean {
+    if (this.#nativeBasisHandle == null) {
+      return false;
+    }
+
+    return NativeBasisUniversal.setSliceSourceImageHDR(
+      this.#nativeBasisHandle,
+      sliceIndex,
+      imageArray.buffer,
+      width,
+      height,
+      imgType,
+      ldrSrgbToLinear
+    );
+  }
+
   setSliceSourceImage(
     sliceIndex: Int32,
     imageArray: Uint8Array,
