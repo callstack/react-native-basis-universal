@@ -59,6 +59,7 @@ export interface Spec extends TurboModule {
   setNormalMap: (handle: OpaqueNativeBasisHandle) => void;
   setMipRenormalize: (handle: OpaqueNativeBasisHandle, flag: boolean) => void;
   setYFlip: (handle: OpaqueNativeBasisHandle, flag: boolean) => void;
+  setHDR: (handle: OpaqueNativeBasisHandle, flag: boolean) => void;
   setMipGen: (handle: OpaqueNativeBasisHandle, flag: boolean) => void;
 }
 

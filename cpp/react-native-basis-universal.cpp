@@ -100,9 +100,9 @@ int ReactNativeBasisUniversal::encode(jsi::Runtime &rt, jsi::Object handle, jsi:
   if (params.m_create_ktx2_file)
   {
     // Compression succeeded, so copy the .ktx2 file bytes to the caller's buffer.
-    auto output = comp.get_output_basis_file();
+    auto output = comp.get_output_ktx2_file();
     
-    if (!data) {
+    if (!output.data()) {
       return 0;
     }
     
@@ -118,7 +118,7 @@ int ReactNativeBasisUniversal::encode(jsi::Runtime &rt, jsi::Object handle, jsi:
   {
     auto output = comp.get_output_basis_file();
     
-    if (!data) {
+    if (!output.data()) {
       return 0;
     }
     
@@ -161,8 +161,9 @@ bool ReactNativeBasisUniversal::setSliceSourceImage(jsi::Runtime &rt, jsi::Objec
   
   if (isPng)
   {
+    auto size = arrayBuffer.size(rt);
     // It's a PNG file, so try and parse it.
-    if (!load_png(data, arrayBuffer.size(rt), src_img, nullptr))
+    if (!load_png(data, size, src_img, nullptr))
     {
       return false;
     }
@@ -242,4 +243,5 @@ DEFINE_BASIS_ENCODER_PARAMS_SETTER(setUASTC, m_uastc, bool);
 DEFINE_BASIS_ENCODER_PARAMS_SETTER(setComputeStats, m_compute_stats, bool);
 DEFINE_BASIS_ENCODER_PARAMS_SETTER(setCreateKTX2File, m_create_ktx2_file, bool);
 DEFINE_BASIS_ENCODER_PARAMS_SETTER(setDebug, m_debug, bool);
+DEFINE_BASIS_ENCODER_PARAMS_SETTER(setHDR, m_hdr, bool);
 }

@@ -12,8 +12,7 @@ import {
   initializeBasis,
   BasisEncoder,
 } from '@callstack/react-native-basis-universal';
-import { getArrayBufferForBlob } from 'react-native-blob-jsi-helper';
-import RNFS from 'react-native-fs';
+import RNFetchBlob from 'react-native-blob-util';
 
 function arrayBufferToBase64(buffer: Uint8Array): string {
   let binary = '';
@@ -40,6 +39,8 @@ const BlobImage = ({ arrayBuffer }: { arrayBuffer?: Uint8Array | null }) => {
   );
 };
 
+const file = 'kodim01.png';
+
 const BasisEncoderPlayground = () => {
   const [image, setImage] = useState<Uint8Array | null>(null);
   const [options, setOptions] = useState({
@@ -51,7 +52,16 @@ const BasisEncoderPlayground = () => {
   });
 
   useEffect(() => {
-    fetchImage();
+    const filePath = RNFetchBlob.fs.asset(file);
+    RNFetchBlob.fs.readFile(filePath, 'base64').then((data) => {
+      const byteCharacters = atob(data);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      setImage(byteArray);
+    });
   }, []);
 
   const toggleOption = (option: keyof typeof options) => {
@@ -63,9 +73,6 @@ const BasisEncoderPlayground = () => {
 
   const encode = async () => {
     try {
-      const imageWidth = 644;
-      const imageHeight = 874;
-
       if (!image) {
         Alert.alert('No image to encode');
         return;
@@ -75,56 +82,65 @@ const BasisEncoderPlayground = () => {
 
       const basisEncoder = new BasisEncoder();
       basisEncoder.setCreateKTX2File(true);
-      basisEncoder.setDebug(false);
-      basisEncoder.setComputeStats(false);
-      basisEncoder.setSliceSourceImageHDR(
-        0,
-        image,
-        imageWidth,
-        imageHeight,
-        3,
-        false
-      );
-      basisEncoder.setUASTC(options.uastc);
+      basisEncoder.setKTX2UASTCSupercompression(true);
+      basisEncoder.setKTX2SRGBTransferFunc(true);
 
-      if (options.uastc) {
-        basisEncoder.setKTX2UASTCSupercompression(true);
-        basisEncoder.setPackUASTCFlags(2);
+      let useHDR = false;
+
+      if (file.endsWith('.exr')) {
+        useHDR = true;
+      }
+
+      if (useHDR) {
+        basisEncoder.setSliceSourceImageHDR(0, image, 0, 0, 3, true);
+        basisEncoder.setHDR(true);
       } else {
-        basisEncoder.setQualityLevel(128);
-        basisEncoder.setCompressionLevel(2);
+        basisEncoder.setSliceSourceImage(0, new Uint8Array(image), 0, 0, true);
       }
 
-      if (options.srgb) {
-        basisEncoder.setPerceptual(true);
-        basisEncoder.setMipSRGB(true);
-        basisEncoder.setKTX2SRGBTransferFunc(true);
-      }
+      basisEncoder.setDebug(true);
+      basisEncoder.setComputeStats(false);
+      basisEncoder.setQualityLevel(255);
+      basisEncoder.setPerceptual(true);
+      basisEncoder.setMipSRGB(true);
+      basisEncoder.setCompressionLevel(2);
+      basisEncoder.setPackUASTCFlags(1);
+      // basisEncoder.setUASTC(options.uastc);
 
-      if (options.normalMap) {
-        basisEncoder.setNormalMap();
-        basisEncoder.setMipRenormalize(true);
-      }
+      // if (options.uastc) {
+      //   basisEncoder.setPackUASTCFlags(2);
+      // } else {
+      //   basisEncoder.setQualityLevel(128);
+      //   basisEncoder.setCompressionLevel(2);
+      // }
+      //
+      // if (options.srgb) {
+      //   basisEncoder.setPerceptual(true);
+      //   basisEncoder.setMipSRGB(true);
+      // }
+      //
+      // if (options.normalMap) {
+      //   basisEncoder.setNormalMap();
+      //   basisEncoder.setMipRenormalize(true);
+      // }
+      //
+      // if (options.yFlip) {
+      //   basisEncoder.setYFlip(true);
+      // }
 
-      if (options.yFlip) {
-        basisEncoder.setYFlip(true);
-      }
+      // basisEncoder.setMipGen(options.mipmaps);
 
-      basisEncoder.setMipGen(options.mipmaps);
-
-      console.log(`Starting encode with ${imageWidth}x${imageHeight} image`);
-
-      const basisFileData = new Uint8Array(imageWidth * imageHeight * 4);
-      console.log('basisFileData hash before:', basisFileData.slice(0, 100));
+      // Create a destination buffer to hold the compressed .basis file data. If this buffer isn't large enough compression will fail.
+      const ktx2FileData = new Uint8Array(1024 * 1024 * 24);
       const t0 = performance.now();
       console.log(
         'basisFileData byteLength before: ',
-        basisFileData.buffer.byteLength
+        ktx2FileData.buffer.byteLength
       );
-      const numOutputBytes = basisEncoder.encode(basisFileData);
+      const numOutputBytes = basisEncoder.encode(ktx2FileData);
       const t1 = performance.now();
 
-      console.log('basisFileData hash after:', basisFileData.slice(0, 100));
+      basisEncoder.delete();
 
       console.log(
         `Call to basisEncoder.encode took ${(t1 - t0) / 1000} seconds.`
@@ -132,31 +148,20 @@ const BasisEncoderPlayground = () => {
       console.log('numOutputBytes', numOutputBytes);
 
       const actualKTX2FileData = new Uint8Array(
-        basisFileData.buffer,
+        ktx2FileData.buffer,
         0,
         numOutputBytes
       );
 
-      const path = RNFS.DocumentDirectoryPath + '/output.ktx2';
+      const path = RNFetchBlob.fs.dirs.DocumentDir + '/output.ktx2';
       console.log(path);
 
-      const base64Data = arrayBufferToBase64(actualKTX2FileData);
-      await RNFS.writeFile(path, base64Data, 'base64');
+      RNFetchBlob.fs.writeFile(path, Array.from(actualKTX2FileData), 'ascii');
 
       console.log('actualKTX2FileData', actualKTX2FileData.buffer.byteLength);
     } catch (error) {
       console.error('Encoding failed:', error);
     }
-  };
-
-  const fetchImage = async () => {
-    const response = await fetch(
-      'https://github.com/BinomialLLC/basis_universal/raw/refs/heads/master/webgl/ktx2_encode_test/assets/desk.exr'
-    );
-    const blob = await response.blob();
-    const arrayBuffer = getArrayBufferForBlob(blob);
-
-    setImage(arrayBuffer);
   };
 
   return (
@@ -171,7 +176,6 @@ const BasisEncoderPlayground = () => {
         ))}
       </View>
       <Button title="Encode" onPress={encode} />
-      <Button title="Fetch image" onPress={fetchImage} />
       <BlobImage arrayBuffer={image} />
     </View>
   );

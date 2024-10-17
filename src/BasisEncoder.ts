@@ -48,7 +48,15 @@ export class BasisEncoder {
     if (this.#nativeBasisHandle == null) {
       return;
     }
+    console.log('setComputeStats');
     NativeBasisUniversal.setComputeStats(this.#nativeBasisHandle, flag);
+  }
+
+  setHDR(flag: boolean) {
+    if (this.#nativeBasisHandle == null) {
+      return;
+    }
+    NativeBasisUniversal.setHDR(this.#nativeBasisHandle, flag);
   }
 
   setSliceSourceImageHDR(
@@ -120,11 +128,12 @@ export class BasisEncoder {
     NativeBasisUniversal.setPackUASTCFlags(this.#nativeBasisHandle, flag);
   }
 
-  setQualityLevel(flag: number) {
+  setQualityLevel(level: number) {
+    console.log('setQualityLevel');
     if (this.#nativeBasisHandle == null) {
       return;
     }
-    NativeBasisUniversal.setQualityLevel(this.#nativeBasisHandle, flag);
+    NativeBasisUniversal.setQualityLevel(this.#nativeBasisHandle, level);
   }
 
   setCompressionLevel(flag: number) {
