@@ -48,7 +48,6 @@ export class BasisEncoder {
     if (this.#nativeBasisHandle == null) {
       return;
     }
-    console.log('setComputeStats');
     NativeBasisUniversal.setComputeStats(this.#nativeBasisHandle, flag);
   }
 
@@ -89,7 +88,6 @@ export class BasisEncoder {
     height: Int32,
     isPng: boolean
   ): boolean {
-    console.log('setSliceSourceImage');
     if (this.#nativeBasisHandle == null) {
       return false;
     }
@@ -129,7 +127,6 @@ export class BasisEncoder {
   }
 
   setQualityLevel(level: number) {
-    console.log('setQualityLevel');
     if (this.#nativeBasisHandle == null) {
       return;
     }

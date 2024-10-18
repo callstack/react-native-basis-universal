@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+
+import { Picker } from '@react-native-picker/picker';
 import {
   StyleSheet,
   View,
@@ -39,10 +41,9 @@ const BlobImage = ({ arrayBuffer }: { arrayBuffer?: Uint8Array | null }) => {
   );
 };
 
-const file = 'kodim01.png';
-
 const BasisEncoderPlayground = () => {
   const [image, setImage] = useState<Uint8Array | null>(null);
+  const [file, setFile] = useState<string>('desk.exr');
   const [options, setOptions] = useState({
     uastc: false,
     mipmaps: false,
@@ -62,7 +63,7 @@ const BasisEncoderPlayground = () => {
       const byteArray = new Uint8Array(byteNumbers);
       setImage(byteArray);
     });
-  }, []);
+  }, [file]);
 
   const toggleOption = (option: keyof typeof options) => {
     setOptions((prevOptions) => ({
@@ -98,37 +99,33 @@ const BasisEncoderPlayground = () => {
         basisEncoder.setSliceSourceImage(0, new Uint8Array(image), 0, 0, true);
       }
 
-      basisEncoder.setDebug(true);
+      basisEncoder.setDebug(false);
       basisEncoder.setComputeStats(false);
       basisEncoder.setQualityLevel(255);
-      basisEncoder.setPerceptual(true);
       basisEncoder.setMipSRGB(true);
-      basisEncoder.setCompressionLevel(2);
-      basisEncoder.setPackUASTCFlags(1);
-      // basisEncoder.setUASTC(options.uastc);
 
-      // if (options.uastc) {
-      //   basisEncoder.setPackUASTCFlags(2);
-      // } else {
-      //   basisEncoder.setQualityLevel(128);
-      //   basisEncoder.setCompressionLevel(2);
-      // }
-      //
-      // if (options.srgb) {
-      //   basisEncoder.setPerceptual(true);
-      //   basisEncoder.setMipSRGB(true);
-      // }
-      //
-      // if (options.normalMap) {
-      //   basisEncoder.setNormalMap();
-      //   basisEncoder.setMipRenormalize(true);
-      // }
-      //
-      // if (options.yFlip) {
-      //   basisEncoder.setYFlip(true);
-      // }
+      if (options.uastc) {
+        basisEncoder.setPackUASTCFlags(2);
+      } else {
+        basisEncoder.setQualityLevel(128);
+        basisEncoder.setCompressionLevel(2);
+      }
 
-      // basisEncoder.setMipGen(options.mipmaps);
+      if (options.srgb) {
+        basisEncoder.setPerceptual(true);
+        basisEncoder.setMipSRGB(true);
+      }
+
+      if (options.normalMap) {
+        basisEncoder.setNormalMap();
+        basisEncoder.setMipRenormalize(true);
+      }
+
+      if (options.yFlip) {
+        basisEncoder.setYFlip(true);
+      }
+
+      basisEncoder.setMipGen(options.mipmaps);
 
       // Create a destination buffer to hold the compressed .basis file data. If this buffer isn't large enough compression will fail.
       const ktx2FileData = new Uint8Array(1024 * 1024 * 24);
@@ -166,6 +163,15 @@ const BasisEncoderPlayground = () => {
 
   return (
     <View style={styles.container}>
+      <Picker
+        style={{ width: '100%', height: 200 }}
+        selectedValue={file}
+        onValueChange={(itemValue) => setFile(itemValue)}
+      >
+        <Picker.Item label="desk.exr" value="desk.exr" />
+        <Picker.Item label="CandleGlass.exr" value="CandleGlass.exr" />
+        <Picker.Item label="kodim01.png" value="kodim01.png" />
+      </Picker>
       <View style={styles.optionsContainer}>
         {Object.entries(options).map(([key, value]) => (
           <View key={key} style={styles.optionRow}>
@@ -176,7 +182,9 @@ const BasisEncoderPlayground = () => {
         ))}
       </View>
       <Button title="Encode" onPress={encode} />
-      <BlobImage arrayBuffer={image} />
+      <View style={{ height: 200, width: 200 }}>
+        <BlobImage arrayBuffer={image} />
+      </View>
     </View>
   );
 };

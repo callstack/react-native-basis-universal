@@ -58,7 +58,6 @@ int ReactNativeBasisUniversal::encode(jsi::Runtime &rt, jsi::Object handle, jsi:
   }
   
   auto arrayBuffer = basisFileData.getArrayBuffer(rt);
-  auto data = arrayBuffer.data(rt);
   
   if (!basis_initialized_flag)
   {
