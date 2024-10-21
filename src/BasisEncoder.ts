@@ -189,6 +189,84 @@ export class BasisEncoder {
     NativeBasisUniversal.setMipGen(this.#nativeBasisHandle, flag);
   }
 
+  setUASTCHDRQualityLevel(level: number) {
+    if (this.#nativeBasisHandle == null) {
+      return;
+    }
+    NativeBasisUniversal.setUASTCHDRQualityLevel(
+      this.#nativeBasisHandle,
+      level
+    );
+  }
+
+  setCheckForAlpha(flag: boolean) {
+    if (this.#nativeBasisHandle == null) {
+      return;
+    }
+    NativeBasisUniversal.setCheckForAlpha(this.#nativeBasisHandle, flag);
+  }
+
+  setForceAlpha(flag: boolean) {
+    if (this.#nativeBasisHandle == null) {
+      return;
+    }
+    NativeBasisUniversal.setForceAlpha(this.#nativeBasisHandle, flag);
+  }
+
+  setSwizzle(r: number, g: number, b: number, a: number) {
+    if (this.#nativeBasisHandle == null) {
+      return;
+    }
+    NativeBasisUniversal.setSwizzle(this.#nativeBasisHandle, r, g, b, a);
+  }
+
+  setRenormalize(flag: boolean) {
+    if (this.#nativeBasisHandle == null) {
+      return;
+    }
+    NativeBasisUniversal.setRenormalize(this.#nativeBasisHandle, flag);
+  }
+
+  setMaxEndpointClusters(maxClusters: number) {
+    if (this.#nativeBasisHandle == null) {
+      return;
+    }
+    NativeBasisUniversal.setMaxEndpointClusters(
+      this.#nativeBasisHandle,
+      maxClusters
+    );
+  }
+
+  setMaxSelectorClusters(maxClusters: number) {
+    if (this.#nativeBasisHandle == null) {
+      return;
+    }
+    NativeBasisUniversal.setMaxSelectorClusters(
+      this.#nativeBasisHandle,
+      maxClusters
+    );
+  }
+
+  setSelectorRDOThresh(threshold: number) {
+    if (this.#nativeBasisHandle == null) {
+      return;
+    }
+    NativeBasisUniversal.setSelectorRDOThresh(
+      this.#nativeBasisHandle,
+      threshold
+    );
+  }
+
+  setEndpointRDOThresh(threshold: number) {
+    if (this.#nativeBasisHandle == null) {
+      return;
+    }
+    NativeBasisUniversal.setEndpointRDOThresh(
+      this.#nativeBasisHandle,
+      threshold
+    );
+  }
+
   delete() {
     this.#nativeBasisHandle = null;
   }

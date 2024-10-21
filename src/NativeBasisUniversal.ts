@@ -61,6 +61,36 @@ export interface Spec extends TurboModule {
   setYFlip: (handle: OpaqueNativeBasisHandle, flag: boolean) => void;
   setHDR: (handle: OpaqueNativeBasisHandle, flag: boolean) => void;
   setMipGen: (handle: OpaqueNativeBasisHandle, flag: boolean) => void;
+  setUASTCHDRQualityLevel: (
+    handle: OpaqueNativeBasisHandle,
+    level: Int32
+  ) => void;
+  setCheckForAlpha: (handle: OpaqueNativeBasisHandle, flag: boolean) => void;
+  setForceAlpha: (handle: OpaqueNativeBasisHandle, flag: boolean) => void;
+  setSwizzle: (
+    handle: OpaqueNativeBasisHandle,
+    r: Int32,
+    g: Int32,
+    b: Int32,
+    a: Int32
+  ) => void;
+  setRenormalize: (handle: OpaqueNativeBasisHandle, flag: boolean) => void;
+  setMaxEndpointClusters: (
+    handle: OpaqueNativeBasisHandle,
+    maxClusters: Int32
+  ) => void;
+  setMaxSelectorClusters: (
+    handle: OpaqueNativeBasisHandle,
+    maxClusters: Int32
+  ) => void;
+  setSelectorRDOThresh: (
+    handle: OpaqueNativeBasisHandle,
+    threshold: number
+  ) => void;
+  setEndpointRDOThresh: (
+    handle: OpaqueNativeBasisHandle,
+    threshold: number
+  ) => void;
 }
 
 export default TurboModuleRegistry.getEnforcing<Spec>('BasisUniversal');

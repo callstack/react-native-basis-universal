@@ -41,7 +41,16 @@ public:
   void setMipRenormalize(jsi::Runtime &rt, jsi::Object handle, bool flag) override;
   bool setSliceSourceImageHDR(jsi::Runtime &rt, jsi::Object handle, int sliceIndex, jsi::Object imageArray, int width, int height, int imgType, bool ldrSrgbToLinear) override;
   void setHDR(jsi::Runtime &rt, jsi::Object handle, bool flag) override;
-  
+  void setUASTCHDRQualityLevel(jsi::Runtime &rt, jsi::Object handle, int level) override;
+  void setCheckForAlpha(jsi::Runtime &rt, jsi::Object handle, bool flag) override;
+  void setForceAlpha(jsi::Runtime &rt, jsi::Object handle, bool flag) override;
+  void setSwizzle(jsi::Runtime &rt, jsi::Object handle, int r, int g, int b, int a) override;
+  void setRenormalize(jsi::Runtime &rt, jsi::Object handle, bool flag) override;
+  void setMaxEndpointClusters(jsi::Runtime &rt, jsi::Object handle, int maxClusters) override;
+  void setMaxSelectorClusters(jsi::Runtime &rt, jsi::Object handle, int maxClusters) override;
+  void setSelectorRDOThresh(jsi::Runtime &rt, jsi::Object handle, double threshold) override;
+  void setEndpointRDOThresh(jsi::Runtime &rt, jsi::Object handle, double threshold) override;
+
 private:
   bool basis_initialized_flag;
 };
