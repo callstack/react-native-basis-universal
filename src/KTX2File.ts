@@ -1,6 +1,6 @@
 import type { Int32 } from 'react-native/Libraries/Types/CodegenTypes';
 import NativeBasisUniversal from './NativeBasisUniversal';
-import type { OpaqueKTX2FileHandle } from './NativeBasisUniversal';
+import type { KTX2Header, OpaqueKTX2FileHandle } from './NativeBasisUniversal';
 
 export class KTX2File {
   #nativeKTX2FileHandle: OpaqueKTX2FileHandle | null = null;
@@ -43,13 +43,16 @@ export class KTX2File {
       : 0;
   }
 
-  getDFD(): Object | null {
+  getDFD(destination: Uint8Array): Object | null {
     return this.#nativeKTX2FileHandle !== null
-      ? NativeBasisUniversal.getDFD(this.#nativeKTX2FileHandle)
+      ? NativeBasisUniversal.getDFD(
+          this.#nativeKTX2FileHandle,
+          destination.buffer
+        )
       : null;
   }
 
-  getHeader(): Object | null {
+  getHeader(): KTX2Header | null {
     return this.#nativeKTX2FileHandle !== null
       ? NativeBasisUniversal.getHeader(this.#nativeKTX2FileHandle)
       : null;

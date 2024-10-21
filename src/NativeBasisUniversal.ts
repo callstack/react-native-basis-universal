@@ -8,6 +8,24 @@ import type {
 export type OpaqueNativeBasisHandle = UnsafeObject;
 export type OpaqueKTX2FileHandle = UnsafeObject;
 
+export type KTX2Header = {
+  vkFormat: Int32;
+  typeSize: Int32;
+  pixelWidth: Int32;
+  pixelHeight: Int32;
+  pixelDepth: Int32;
+  layerCount: Int32;
+  faceCount: Int32;
+  levelCount: Int32;
+  supercompressionScheme: Int32;
+  dfdByteOffset: Int32;
+  dfdByteLength: Int32;
+  kvdByteOffset: Int32;
+  kvdByteLength: Int32;
+  sgdByteOffset: Int32;
+  sgdByteLength: Int32;
+};
+
 export interface Spec extends TurboModule {
   // Basis
   initializeBasis: () => void;
@@ -98,8 +116,8 @@ export interface Spec extends TurboModule {
   isValid: (handle: OpaqueKTX2FileHandle) => boolean;
   close: (handle: OpaqueKTX2FileHandle) => void;
   getDFDSize: (handle: OpaqueKTX2FileHandle) => Int32;
-  getDFD: (handle: OpaqueKTX2FileHandle) => UnsafeObject;
-  getHeader: (handle: OpaqueKTX2FileHandle) => UnsafeObject;
+  getDFD: (handle: OpaqueKTX2FileHandle, destination: UnsafeObject) => Int32;
+  getHeader: (handle: OpaqueKTX2FileHandle) => KTX2Header;
   hasKey: (handle: OpaqueKTX2FileHandle, key: string) => boolean;
   getTotalKeys: (handle: OpaqueKTX2FileHandle) => Int32;
   getKey: (handle: OpaqueKTX2FileHandle, index: Int32) => string;

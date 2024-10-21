@@ -21,8 +21,6 @@ void ReactNativeBasisUniversal::NAME(jsi::Runtime &rt, jsi::Object handle) { \
 }
 
 
-
-
 using namespace basist;
 using namespace basisu;
 
@@ -302,7 +300,7 @@ DEFINE_BASIS_ENCODER_PARAMS_SETTER(setHDR, m_hdr, bool);
 
 jsi::Object ReactNativeBasisUniversal::createKTX2FileHandle(jsi::Runtime &rt, jsi::Object data) {
   jsi::Object basisObject{rt};
-//  basisObject.setNativeState(rt, std::make_shared<KTX2File>(rt, data));
+  basisObject.setNativeState(rt, std::make_shared<KTX2File>(rt, data.getArrayBuffer(rt)));
   return basisObject;
 }
 
@@ -330,9 +328,9 @@ GENERATE_KTX2_METHOD(int, getDFDChannelID1);
 GENERATE_KTX2_METHOD(bool, isVideo);
 GENERATE_KTX2_METHOD(bool, startTranscoding);
 
-jsi::Object ReactNativeBasisUniversal::getDFD(jsi::Runtime &rt, jsi::Object handle) {
-  // TODO: Implement getDFD
-  return jsi::Object(rt);
+int ReactNativeBasisUniversal::getDFD(jsi::Runtime &rt, jsi::Object handle, jsi::Object destination) {
+  auto ktx2Handle = tryGetKTX2Handle(rt, handle);
+  return ktx2Handle->getDFD(rt, destination);
 }
 
 jsi::Object ReactNativeBasisUniversal::getHeader(jsi::Runtime &rt, jsi::Object handle) {
@@ -341,19 +339,20 @@ jsi::Object ReactNativeBasisUniversal::getHeader(jsi::Runtime &rt, jsi::Object h
 }
 
 bool ReactNativeBasisUniversal::hasKey(jsi::Runtime &rt, jsi::Object handle, jsi::String key) {
-  // TODO: Implement hasKey
-  return false;
+  auto ktx2Handle = tryGetKTX2Handle(rt, handle);
+  return ktx2Handle->hasKey(key.utf8(rt));
 }
 
 
 jsi::String ReactNativeBasisUniversal::getKey(jsi::Runtime &rt, jsi::Object handle, int index) {
-  // TODO: Implement getKey
-  return jsi::String::createFromUtf8(rt, "");
+  auto ktx2Handle = tryGetKTX2Handle(rt, handle);
+  auto result = ktx2Handle->getKey(index);
+  return jsi::String::createFromUtf8(rt, result);
 }
 
 int ReactNativeBasisUniversal::getKeyValueSize(jsi::Runtime &rt, jsi::Object handle, jsi::String key) {
-  // TODO: Implement getKeyValueSize
-  return 0;
+  auto ktx2Handle = tryGetKTX2Handle(rt, handle);
+  return ktx2Handle->getKeyValueSize(key.utf8(rt));
 }
 
 jsi::Object ReactNativeBasisUniversal::getKeyValue(jsi::Runtime &rt, jsi::Object handle, jsi::String key) {
@@ -362,16 +361,22 @@ jsi::Object ReactNativeBasisUniversal::getKeyValue(jsi::Runtime &rt, jsi::Object
 }
 
 int ReactNativeBasisUniversal::getETC1SImageDescImageFlags(jsi::Runtime &rt, jsi::Object handle) {
-  // TODO: Implement getETC1SImageDescImageFlags
+  auto ktx2Handle = tryGetKTX2Handle(rt, handle);
+  // TODO: Fix this
+  //  return ktx2Handle->getETC1SImageDescImageFlags();
   return 0;
 }
 
 jsi::Object ReactNativeBasisUniversal::getImageLevelInfo(jsi::Runtime &rt, jsi::Object handle, int level, int layerIndex, int faceIndex) {
-  // TODO: Implement getImageLevelInfo
+  auto ktx2Handle = tryGetKTX2Handle(rt, handle);
+  // TODO: Fix this
+  ktx2Handle->getImageLevelInfo(level, layerIndex, faceIndex);
   return jsi::Object(rt);
 }
 
 int ReactNativeBasisUniversal::getImageTranscodedSizeInBytes(jsi::Runtime &rt, jsi::Object handle, int level, int format) {
+  auto ktx2Handle = tryGetKTX2Handle(rt, handle);
+  // TODO: Fix this
   // TODO: Implement getImageTranscodedSizeInBytes
   return 0;
 }

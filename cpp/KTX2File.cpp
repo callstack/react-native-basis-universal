@@ -317,7 +317,7 @@ uint32_t KTX2File::startTranscoding()
   return m_transcoder.start_transcoding();
 }
 
-uint32_t KTX2File::transcodeImage(jsi::Object destination, uint32_t level_index, uint32_t layer_index, uint32_t face_index, uint32_t format, uint32_t get_alpha_for_opaque_formats, int channel0, int channel1)
+uint32_t KTX2File::transcodeImage(jsi::Object& destination, uint32_t level_index, uint32_t layer_index, uint32_t face_index, uint32_t format, uint32_t get_alpha_for_opaque_formats, int channel0, int channel1)
 {
   assert(m_magic == KTX2_MAGIC);
   if (m_magic != KTX2_MAGIC)
@@ -387,6 +387,25 @@ uint32_t KTX2File::transcodeImage(jsi::Object destination, uint32_t level_index,
   
   // TODO: Copy dst_data to destination object.
   return status;
+}
+
+uint32_t KTX2File::getDFD(jsi::Runtime &rt, jsi::Object& destination)
+{
+  assert(m_magic == KTX2_MAGIC);
+  if (m_magic != KTX2_MAGIC)
+    return 0;
+  
+  auto arrayBuffer = destination.getArrayBuffer(rt);
+  
+  const uint8_vec &dst_data = m_transcoder.get_dfd();
+  
+  if (dst_data.size()) {
+    auto outputBuffer = jsi::ArrayBuffer(std::move(arrayBuffer));
+    memcpy(outputBuffer.data(rt), dst_data.data(), dst_data.size());
+    destination.setProperty(rt, jsi::PropNameID::forAscii(rt, "buffer"), outputBuffer);
+  }
+  
+  return 1;
 }
 
 // TODO: Implement missing methods

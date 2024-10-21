@@ -13,6 +13,12 @@
 
 namespace facebook::react {
 
+using KTX2Header = NativeBasisUniversalKTX2Header<uint32_t, uint32_t, uint32_t, uint32_t, uint32_t, uint32_t, uint32_t, uint32_t, uint32_t, uint32_t, uint32_t, uint32_t, uint32_t, bool, bool>;
+
+template <>
+struct Bridging<KTX2Header>
+: NativeBasisUniversalKTX2HeaderBridging<KTX2Header> {};
+
 using namespace facebook;
 
 class ReactNativeBasisUniversal : public NativeBasisUniversalCxxSpecJSI {
@@ -58,7 +64,7 @@ public:
   bool isValid(jsi::Runtime &rt, jsi::Object handle) override;
   void close(jsi::Runtime &rt, jsi::Object handle) override;
   int getDFDSize(jsi::Runtime &rt, jsi::Object handle) override;
-  jsi::Object getDFD(jsi::Runtime &rt, jsi::Object handle) override;
+  int getDFD(jsi::Runtime &rt, jsi::Object handle, jsi::Object destination) override;
   jsi::Object getHeader(jsi::Runtime &rt, jsi::Object handle) override;
   bool hasKey(jsi::Runtime &rt, jsi::Object handle, jsi::String key) override;
   int getTotalKeys(jsi::Runtime &rt, jsi::Object handle) override;
@@ -89,6 +95,7 @@ public:
   bool startTranscoding(jsi::Runtime &rt, jsi::Object handle) override;
   bool transcodeImage(jsi::Runtime &rt, jsi::Object handle, jsi::Object dst, int dstSize, int level, int format, int decodeFlags, int faceIndex, int layerIndex) override;
 
+ 
 
 private:
   bool basis_initialized_flag;
