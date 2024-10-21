@@ -6,6 +6,7 @@ import type {
 } from 'react-native/Libraries/Types/CodegenTypes';
 
 export type OpaqueNativeBasisHandle = UnsafeObject;
+export type OpaqueKTX2FileHandle = UnsafeObject;
 
 export interface Spec extends TurboModule {
   // Basis
@@ -91,6 +92,60 @@ export interface Spec extends TurboModule {
     handle: OpaqueNativeBasisHandle,
     threshold: number
   ) => void;
+
+  // KTX2File
+  createKTX2FileHandle: (data: UnsafeObject) => OpaqueKTX2FileHandle;
+  isValid: (handle: OpaqueKTX2FileHandle) => boolean;
+  close: (handle: OpaqueKTX2FileHandle) => void;
+  getDFDSize: (handle: OpaqueKTX2FileHandle) => Int32;
+  getDFD: (handle: OpaqueKTX2FileHandle) => UnsafeObject;
+  getHeader: (handle: OpaqueKTX2FileHandle) => UnsafeObject;
+  hasKey: (handle: OpaqueKTX2FileHandle, key: string) => boolean;
+  getTotalKeys: (handle: OpaqueKTX2FileHandle) => Int32;
+  getKey: (handle: OpaqueKTX2FileHandle, index: Int32) => string;
+  getKeyValueSize: (handle: OpaqueKTX2FileHandle, key: string) => Int32;
+  getKeyValue: (handle: OpaqueKTX2FileHandle, key: string) => UnsafeObject;
+  getWidth: (handle: OpaqueKTX2FileHandle) => Int32;
+  getHeight: (handle: OpaqueKTX2FileHandle) => Int32;
+  getFaces: (handle: OpaqueKTX2FileHandle) => Int32;
+  getLayers: (handle: OpaqueKTX2FileHandle) => Int32;
+  getLevels: (handle: OpaqueKTX2FileHandle) => Int32;
+  getFormat: (handle: OpaqueKTX2FileHandle) => Int32;
+  isUASTC: (handle: OpaqueKTX2FileHandle) => boolean;
+  isHDR: (handle: OpaqueKTX2FileHandle) => boolean;
+  isETC1S: (handle: OpaqueKTX2FileHandle) => boolean;
+  getHasAlpha: (handle: OpaqueKTX2FileHandle) => boolean;
+  getDFDColorModel: (handle: OpaqueKTX2FileHandle) => Int32;
+  getDFDColorPrimaries: (handle: OpaqueKTX2FileHandle) => Int32;
+  getDFDTransferFunc: (handle: OpaqueKTX2FileHandle) => Int32;
+  getDFDFlags: (handle: OpaqueKTX2FileHandle) => Int32;
+  getDFDTotalSamples: (handle: OpaqueKTX2FileHandle) => Int32;
+  getDFDChannelID0: (handle: OpaqueKTX2FileHandle) => Int32;
+  getDFDChannelID1: (handle: OpaqueKTX2FileHandle) => Int32;
+  isVideo: (handle: OpaqueKTX2FileHandle) => boolean;
+  getETC1SImageDescImageFlags: (handle: OpaqueKTX2FileHandle) => Int32;
+  getImageLevelInfo: (
+    handle: OpaqueKTX2FileHandle,
+    level: Int32,
+    layerIndex: Int32,
+    faceIndex: Int32
+  ) => UnsafeObject;
+  getImageTranscodedSizeInBytes: (
+    handle: OpaqueKTX2FileHandle,
+    level: Int32,
+    format: Int32
+  ) => Int32;
+  startTranscoding: (handle: OpaqueKTX2FileHandle) => boolean;
+  transcodeImage: (
+    handle: OpaqueKTX2FileHandle,
+    dst: UnsafeObject,
+    dstSize: Int32,
+    level: Int32,
+    format: Int32,
+    decodeFlags: Int32,
+    faceIndex: Int32,
+    layerIndex: Int32
+  ) => boolean;
 }
 
 export default TurboModuleRegistry.getEnforcing<Spec>('BasisUniversal');

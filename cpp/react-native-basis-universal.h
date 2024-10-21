@@ -21,6 +21,8 @@ public:
   constexpr static auto kModuleName = "BasisUniversal";
 
   void initializeBasis(jsi::Runtime &rt) override;
+
+  // Basis Encoder
   jsi::Object createBasisHandle(jsi::Runtime &rt) override;
   void setCreateKTX2File(jsi::Runtime &rt, jsi::Object handle, bool flag) override;
   void setDebug(jsi::Runtime &rt, jsi::Object handle, bool flag) override;
@@ -50,6 +52,43 @@ public:
   void setMaxSelectorClusters(jsi::Runtime &rt, jsi::Object handle, int maxClusters) override;
   void setSelectorRDOThresh(jsi::Runtime &rt, jsi::Object handle, double threshold) override;
   void setEndpointRDOThresh(jsi::Runtime &rt, jsi::Object handle, double threshold) override;
+
+  // KTX2 File
+  jsi::Object createKTX2FileHandle(jsi::Runtime &rt, jsi::Object data) override;
+  bool isValid(jsi::Runtime &rt, jsi::Object handle) override;
+  void close(jsi::Runtime &rt, jsi::Object handle) override;
+  int getDFDSize(jsi::Runtime &rt, jsi::Object handle) override;
+  jsi::Object getDFD(jsi::Runtime &rt, jsi::Object handle) override;
+  jsi::Object getHeader(jsi::Runtime &rt, jsi::Object handle) override;
+  bool hasKey(jsi::Runtime &rt, jsi::Object handle, jsi::String key) override;
+  int getTotalKeys(jsi::Runtime &rt, jsi::Object handle) override;
+  jsi::String getKey(jsi::Runtime &rt, jsi::Object handle, int index) override;
+  int getKeyValueSize(jsi::Runtime &rt, jsi::Object handle, jsi::String key) override;
+  jsi::Object getKeyValue(jsi::Runtime &rt, jsi::Object handle, jsi::String key) override;
+  int getWidth(jsi::Runtime &rt, jsi::Object handle) override;
+  int getHeight(jsi::Runtime &rt, jsi::Object handle) override;
+  int getFaces(jsi::Runtime &rt, jsi::Object handle) override;
+  int getLayers(jsi::Runtime &rt, jsi::Object handle) override;
+  int getLevels(jsi::Runtime &rt, jsi::Object handle) override;
+  int getFormat(jsi::Runtime &rt, jsi::Object handle) override;
+  bool isUASTC(jsi::Runtime &rt, jsi::Object handle) override;
+  bool isHDR(jsi::Runtime &rt, jsi::Object handle) override;
+  bool isETC1S(jsi::Runtime &rt, jsi::Object handle) override;
+  bool getHasAlpha(jsi::Runtime &rt, jsi::Object handle) override;
+  int getDFDColorModel(jsi::Runtime &rt, jsi::Object handle) override;
+  int getDFDColorPrimaries(jsi::Runtime &rt, jsi::Object handle) override;
+  int getDFDTransferFunc(jsi::Runtime &rt, jsi::Object handle) override;
+  int getDFDFlags(jsi::Runtime &rt, jsi::Object handle) override;
+  int getDFDTotalSamples(jsi::Runtime &rt, jsi::Object handle) override;
+  int getDFDChannelID0(jsi::Runtime &rt, jsi::Object handle) override;
+  int getDFDChannelID1(jsi::Runtime &rt, jsi::Object handle) override;
+  bool isVideo(jsi::Runtime &rt, jsi::Object handle) override;
+  int getETC1SImageDescImageFlags(jsi::Runtime &rt, jsi::Object handle) override;
+  jsi::Object getImageLevelInfo(jsi::Runtime &rt, jsi::Object handle, int level, int layerIndex, int faceIndex) override;
+  int getImageTranscodedSizeInBytes(jsi::Runtime &rt, jsi::Object handle, int level, int format) override;
+  bool startTranscoding(jsi::Runtime &rt, jsi::Object handle) override;
+  bool transcodeImage(jsi::Runtime &rt, jsi::Object handle, jsi::Object dst, int dstSize, int level, int format, int decodeFlags, int faceIndex, int layerIndex) override;
+
 
 private:
   bool basis_initialized_flag;

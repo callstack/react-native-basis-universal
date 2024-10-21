@@ -1,10 +1,26 @@
 #include "react-native-basis-universal.h"
+#include "KTX2File.h"
+#include <valarray>
 
 #define DEFINE_BASIS_ENCODER_PARAMS_SETTER(func_name, param_name, param_type) \
 void ReactNativeBasisUniversal::func_name(jsi::Runtime &rt, jsi::Object handle, param_type flag) { \
   auto encoder = tryGetBasisEncoder(rt, handle); \
   encoder->m_params.param_name = flag; \
 }
+
+#define GENERATE_KTX2_METHOD(RETURN_TYPE, NAME) \
+RETURN_TYPE ReactNativeBasisUniversal::NAME(jsi::Runtime &rt, jsi::Object handle) { \
+    auto ktx2Handle = tryGetKTX2Handle(rt, handle); \
+    return ktx2Handle->NAME(); \
+}
+
+#define GENERATE_KTX2_VOID_METHOD(NAME) \
+void ReactNativeBasisUniversal::NAME(jsi::Runtime &rt, jsi::Object handle) { \
+    auto ktx2Handle = tryGetKTX2Handle(rt, handle); \
+    ktx2Handle->NAME(); \
+}
+
+
 
 
 using namespace basist;
@@ -24,6 +40,15 @@ std::shared_ptr<BasisEncoder> tryGetBasisEncoder(jsi::Runtime& rt, jsi::Object& 
 
   auto encoder = std::dynamic_pointer_cast<BasisEncoder>(basisEncoderObj.getNativeState(rt));
   return encoder;
+}
+
+std::shared_ptr<KTX2File> tryGetKTX2Handle(jsi::Runtime& rt, jsi::Object& kt2xHandle) {
+  if (!kt2xHandle.hasNativeState(rt)) {
+    return nullptr;
+  }
+
+  auto ktx2file = std::dynamic_pointer_cast<KTX2File>(kt2xHandle.getNativeState(rt));
+  return ktx2file;
 }
 
 ReactNativeBasisUniversal::ReactNativeBasisUniversal(std::shared_ptr<CallInvoker> jsInvoker)
@@ -271,4 +296,90 @@ DEFINE_BASIS_ENCODER_PARAMS_SETTER(setComputeStats, m_compute_stats, bool);
 DEFINE_BASIS_ENCODER_PARAMS_SETTER(setCreateKTX2File, m_create_ktx2_file, bool);
 DEFINE_BASIS_ENCODER_PARAMS_SETTER(setDebug, m_debug, bool);
 DEFINE_BASIS_ENCODER_PARAMS_SETTER(setHDR, m_hdr, bool);
+
+
+// KTX2 File
+
+jsi::Object ReactNativeBasisUniversal::createKTX2FileHandle(jsi::Runtime &rt, jsi::Object data) {
+  jsi::Object basisObject{rt};
+//  basisObject.setNativeState(rt, std::make_shared<KTX2File>(rt, data));
+  return basisObject;
+}
+
+GENERATE_KTX2_METHOD(bool, isValid);
+GENERATE_KTX2_METHOD(int, getDFDSize);
+GENERATE_KTX2_VOID_METHOD(close);
+GENERATE_KTX2_METHOD(int, getTotalKeys);
+GENERATE_KTX2_METHOD(int, getWidth);
+GENERATE_KTX2_METHOD(int, getHeight);
+GENERATE_KTX2_METHOD(int, getFaces);
+GENERATE_KTX2_METHOD(int, getLayers);
+GENERATE_KTX2_METHOD(int, getLevels);
+GENERATE_KTX2_METHOD(int, getFormat);
+GENERATE_KTX2_METHOD(bool, isUASTC);
+GENERATE_KTX2_METHOD(bool, isHDR);
+GENERATE_KTX2_METHOD(bool, isETC1S);
+GENERATE_KTX2_METHOD(bool, getHasAlpha);
+GENERATE_KTX2_METHOD(int, getDFDColorModel);
+GENERATE_KTX2_METHOD(int, getDFDColorPrimaries);
+GENERATE_KTX2_METHOD(int, getDFDTransferFunc);
+GENERATE_KTX2_METHOD(int, getDFDFlags);
+GENERATE_KTX2_METHOD(int, getDFDTotalSamples);
+GENERATE_KTX2_METHOD(int, getDFDChannelID0);
+GENERATE_KTX2_METHOD(int, getDFDChannelID1);
+GENERATE_KTX2_METHOD(bool, isVideo);
+GENERATE_KTX2_METHOD(bool, startTranscoding);
+
+jsi::Object ReactNativeBasisUniversal::getDFD(jsi::Runtime &rt, jsi::Object handle) {
+  // TODO: Implement getDFD
+  return jsi::Object(rt);
+}
+
+jsi::Object ReactNativeBasisUniversal::getHeader(jsi::Runtime &rt, jsi::Object handle) {
+  // TODO: Implement getHeader
+  return jsi::Object(rt);
+}
+
+bool ReactNativeBasisUniversal::hasKey(jsi::Runtime &rt, jsi::Object handle, jsi::String key) {
+  // TODO: Implement hasKey
+  return false;
+}
+
+
+jsi::String ReactNativeBasisUniversal::getKey(jsi::Runtime &rt, jsi::Object handle, int index) {
+  // TODO: Implement getKey
+  return jsi::String::createFromUtf8(rt, "");
+}
+
+int ReactNativeBasisUniversal::getKeyValueSize(jsi::Runtime &rt, jsi::Object handle, jsi::String key) {
+  // TODO: Implement getKeyValueSize
+  return 0;
+}
+
+jsi::Object ReactNativeBasisUniversal::getKeyValue(jsi::Runtime &rt, jsi::Object handle, jsi::String key) {
+  // TODO: Implement getKeyValue
+  return jsi::Object(rt);
+}
+
+int ReactNativeBasisUniversal::getETC1SImageDescImageFlags(jsi::Runtime &rt, jsi::Object handle) {
+  // TODO: Implement getETC1SImageDescImageFlags
+  return 0;
+}
+
+jsi::Object ReactNativeBasisUniversal::getImageLevelInfo(jsi::Runtime &rt, jsi::Object handle, int level, int layerIndex, int faceIndex) {
+  // TODO: Implement getImageLevelInfo
+  return jsi::Object(rt);
+}
+
+int ReactNativeBasisUniversal::getImageTranscodedSizeInBytes(jsi::Runtime &rt, jsi::Object handle, int level, int format) {
+  // TODO: Implement getImageTranscodedSizeInBytes
+  return 0;
+}
+
+
+bool ReactNativeBasisUniversal::transcodeImage(jsi::Runtime &rt, jsi::Object handle, jsi::Object dst, int dstSize, int level, int format, int decodeFlags, int faceIndex, int layerIndex) {
+  // TODO: Implement transcodeImage
+  return false;
+}
+
 }
