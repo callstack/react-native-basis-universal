@@ -19,8 +19,15 @@ export class BasisEncoder {
     return NativeBasisUniversal.createBasisHandle();
   }
 
-  encode() {
-    console.log('encode');
+  encode(basisFileData: Uint8Array): Int32 {
+    if (this.#nativeBasisHandle == null) {
+      return 0;
+    }
+
+    return NativeBasisUniversal.encode(
+      this.#nativeBasisHandle,
+      basisFileData.buffer
+    );
   }
 
   setCreateKTX2File(flag: boolean) {
@@ -44,22 +51,51 @@ export class BasisEncoder {
     NativeBasisUniversal.setComputeStats(this.#nativeBasisHandle, flag);
   }
 
+  setHDR(flag: boolean) {
+    if (this.#nativeBasisHandle == null) {
+      return;
+    }
+    NativeBasisUniversal.setHDR(this.#nativeBasisHandle, flag);
+  }
+
+  setSliceSourceImageHDR(
+    sliceIndex: Int32,
+    imageArray: Uint8Array,
+    width: Int32,
+    height: Int32,
+    imgType: Int32,
+    ldrSrgbToLinear: boolean
+  ): boolean {
+    if (this.#nativeBasisHandle == null) {
+      return false;
+    }
+
+    return NativeBasisUniversal.setSliceSourceImageHDR(
+      this.#nativeBasisHandle,
+      sliceIndex,
+      imageArray.buffer,
+      width,
+      height,
+      imgType,
+      ldrSrgbToLinear
+    );
+  }
+
   setSliceSourceImage(
     sliceIndex: Int32,
     imageArray: Uint8Array,
     width: Int32,
     height: Int32,
     isPng: boolean
-  ) {
-    console.log('setSliceSourceImage');
-
+  ): boolean {
     if (this.#nativeBasisHandle == null) {
-      return;
+      return false;
     }
-    NativeBasisUniversal.setSliceSourceImage(
+
+    return NativeBasisUniversal.setSliceSourceImage(
       this.#nativeBasisHandle,
       sliceIndex,
-      imageArray,
+      imageArray.buffer,
       width,
       height,
       isPng
@@ -90,11 +126,11 @@ export class BasisEncoder {
     NativeBasisUniversal.setPackUASTCFlags(this.#nativeBasisHandle, flag);
   }
 
-  setQualityLevel(flag: number) {
+  setQualityLevel(level: number) {
     if (this.#nativeBasisHandle == null) {
       return;
     }
-    NativeBasisUniversal.setQualityLevel(this.#nativeBasisHandle, flag);
+    NativeBasisUniversal.setQualityLevel(this.#nativeBasisHandle, level);
   }
 
   setCompressionLevel(flag: number) {
@@ -105,34 +141,133 @@ export class BasisEncoder {
   }
 
   setPerceptual(flag: boolean) {
-    console.log('setPerceptual', flag);
+    if (this.#nativeBasisHandle == null) {
+      return;
+    }
+    NativeBasisUniversal.setPerceptual(this.#nativeBasisHandle, flag);
   }
 
   setMipSRGB(flag: boolean) {
-    console.log('setMipSRGB', flag);
+    if (this.#nativeBasisHandle == null) {
+      return;
+    }
+    NativeBasisUniversal.setMipSRGB(this.#nativeBasisHandle, flag);
   }
 
   setKTX2SRGBTransferFunc(flag: boolean) {
-    console.log('setKTX2SRGBTransferFunc', flag);
+    if (this.#nativeBasisHandle == null) {
+      return;
+    }
+    NativeBasisUniversal.setMipSRGB(this.#nativeBasisHandle, flag);
   }
 
   setNormalMap() {
-    console.log('setNormalMap');
+    if (this.#nativeBasisHandle == null) {
+      return;
+    }
+    NativeBasisUniversal.setNormalMap(this.#nativeBasisHandle);
   }
 
   setMipRenormalize(flag: boolean) {
-    console.log('setMipRenormalize', flag);
+    if (this.#nativeBasisHandle == null) {
+      return;
+    }
+    NativeBasisUniversal.setMipRenormalize(this.#nativeBasisHandle, flag);
   }
 
   setYFlip(flag: boolean) {
-    console.log('setYFlip', flag);
+    if (this.#nativeBasisHandle == null) {
+      return;
+    }
+    NativeBasisUniversal.setYFlip(this.#nativeBasisHandle, flag);
   }
 
   setMipGen(flag: boolean) {
-    console.log('setMipGen', flag);
+    if (this.#nativeBasisHandle == null) {
+      return;
+    }
+    NativeBasisUniversal.setMipGen(this.#nativeBasisHandle, flag);
+  }
+
+  setUASTCHDRQualityLevel(level: number) {
+    if (this.#nativeBasisHandle == null) {
+      return;
+    }
+    NativeBasisUniversal.setUASTCHDRQualityLevel(
+      this.#nativeBasisHandle,
+      level
+    );
+  }
+
+  setCheckForAlpha(flag: boolean) {
+    if (this.#nativeBasisHandle == null) {
+      return;
+    }
+    NativeBasisUniversal.setCheckForAlpha(this.#nativeBasisHandle, flag);
+  }
+
+  setForceAlpha(flag: boolean) {
+    if (this.#nativeBasisHandle == null) {
+      return;
+    }
+    NativeBasisUniversal.setForceAlpha(this.#nativeBasisHandle, flag);
+  }
+
+  setSwizzle(r: number, g: number, b: number, a: number) {
+    if (this.#nativeBasisHandle == null) {
+      return;
+    }
+    NativeBasisUniversal.setSwizzle(this.#nativeBasisHandle, r, g, b, a);
+  }
+
+  setRenormalize(flag: boolean) {
+    if (this.#nativeBasisHandle == null) {
+      return;
+    }
+    NativeBasisUniversal.setRenormalize(this.#nativeBasisHandle, flag);
+  }
+
+  setMaxEndpointClusters(maxClusters: number) {
+    if (this.#nativeBasisHandle == null) {
+      return;
+    }
+    NativeBasisUniversal.setMaxEndpointClusters(
+      this.#nativeBasisHandle,
+      maxClusters
+    );
+  }
+
+  setMaxSelectorClusters(maxClusters: number) {
+    if (this.#nativeBasisHandle == null) {
+      return;
+    }
+    NativeBasisUniversal.setMaxSelectorClusters(
+      this.#nativeBasisHandle,
+      maxClusters
+    );
+  }
+
+  setSelectorRDOThresh(threshold: number) {
+    if (this.#nativeBasisHandle == null) {
+      return;
+    }
+    NativeBasisUniversal.setSelectorRDOThresh(
+      this.#nativeBasisHandle,
+      threshold
+    );
+  }
+
+  setEndpointRDOThresh(threshold: number) {
+    if (this.#nativeBasisHandle == null) {
+      return;
+    }
+    NativeBasisUniversal.setEndpointRDOThresh(
+      this.#nativeBasisHandle,
+      threshold
+    );
   }
 
   delete() {
-    console.log('delete');
+    this.#nativeBasisHandle = null;
   }
 }

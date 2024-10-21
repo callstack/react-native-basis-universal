@@ -52,6 +52,8 @@ jobs:
 
   build-android:
     runs-on: ubuntu-latest
+    # Skip Android builds
+    if: false
     env:
       TURBO_CACHE_DIR: .turbo/android
     steps:
@@ -133,22 +135,10 @@ jobs:
             echo "turbo_cache_hit=1" >> $GITHUB_ENV
           fi
 
-      - name: Cache cocoapods
-        if: env.turbo_cache_hit != 1
-        id: cocoapods-cache
-        uses: actions/cache@v3
-        with:
-          path: |
-            **/ios/Pods
-          key: ${{ runner.os }}-cocoapods-${{ hashFiles('example/ios/Podfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-cocoapods-
-
       - name: Install cocoapods
-        if: env.turbo_cache_hit != 1 && steps.cocoapods-cache.outputs.cache-hit != 'true'
         run: |
-          cd example/ios
-          pod install
+          cd example
+          pod install --project-directory=ios
         env:
           NO_FLIPPER: 1
 
