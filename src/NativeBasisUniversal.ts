@@ -26,6 +26,21 @@ export type KTX2Header = {
   sgdByteLength: Int32;
 };
 
+export type KTX2ImageLevelInfo = {
+  levelIndex: Int32;
+  layerIndex: Int32;
+  faceIndex: Int32;
+  origWidth: Int32;
+  origHeight: Int32;
+  width: Int32;
+  height: Int32;
+  numBlocksX: Int32;
+  numBlocksY: Int32;
+  totalBlocks: Int32;
+  alphaFlag: boolean;
+  iframeFlag: boolean;
+};
+
 export interface Spec extends TurboModule {
   // Basis
   initializeBasis: () => void;
@@ -122,7 +137,10 @@ export interface Spec extends TurboModule {
   getTotalKeys: (handle: OpaqueKTX2FileHandle) => Int32;
   getKey: (handle: OpaqueKTX2FileHandle, index: Int32) => string;
   getKeyValueSize: (handle: OpaqueKTX2FileHandle, key: string) => Int32;
-  getKeyValue: (handle: OpaqueKTX2FileHandle, key: string) => UnsafeObject;
+  getKeyValue: (
+    handle: OpaqueKTX2FileHandle,
+    destination: UnsafeObject
+  ) => Int32;
   getWidth: (handle: OpaqueKTX2FileHandle) => Int32;
   getHeight: (handle: OpaqueKTX2FileHandle) => Int32;
   getFaces: (handle: OpaqueKTX2FileHandle) => Int32;
@@ -141,29 +159,37 @@ export interface Spec extends TurboModule {
   getDFDChannelID0: (handle: OpaqueKTX2FileHandle) => Int32;
   getDFDChannelID1: (handle: OpaqueKTX2FileHandle) => Int32;
   isVideo: (handle: OpaqueKTX2FileHandle) => boolean;
-  getETC1SImageDescImageFlags: (handle: OpaqueKTX2FileHandle) => Int32;
+  getETC1SImageDescImageFlags: (
+    handle: OpaqueKTX2FileHandle,
+    levelIndex: Int32,
+    layerIndex: Int32,
+    faceIndex: Int32
+  ) => Int32;
   getImageLevelInfo: (
     handle: OpaqueKTX2FileHandle,
     level: Int32,
     layerIndex: Int32,
     faceIndex: Int32
-  ) => UnsafeObject;
+  ) => KTX2ImageLevelInfo;
   getImageTranscodedSizeInBytes: (
     handle: OpaqueKTX2FileHandle,
-    level: Int32,
+    levelIndex: Int32,
+    layerIndex: Int32,
+    faceIndex: Int32,
     format: Int32
   ) => Int32;
   startTranscoding: (handle: OpaqueKTX2FileHandle) => boolean;
   transcodeImage: (
     handle: OpaqueKTX2FileHandle,
     dst: UnsafeObject,
-    dstSize: Int32,
-    level: Int32,
-    format: Int32,
-    decodeFlags: Int32,
+    levelIndex: Int32,
+    layerIndex: Int32,
     faceIndex: Int32,
-    layerIndex: Int32
-  ) => boolean;
+    format: Int32,
+    getAlphaForOpaqueFormats: Int32,
+    channel0: Int32,
+    channel1: Int32
+  ) => Int32;
 }
 
 export default TurboModuleRegistry.getEnforcing<Spec>('BasisUniversal');

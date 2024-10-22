@@ -1,6 +1,10 @@
 import type { Int32 } from 'react-native/Libraries/Types/CodegenTypes';
 import NativeBasisUniversal from './NativeBasisUniversal';
-import type { KTX2Header, OpaqueKTX2FileHandle } from './NativeBasisUniversal';
+import type {
+  KTX2Header,
+  KTX2ImageLevelInfo,
+  OpaqueKTX2FileHandle,
+} from './NativeBasisUniversal';
 
 export class KTX2File {
   #nativeKTX2FileHandle: OpaqueKTX2FileHandle | null = null;
@@ -83,10 +87,13 @@ export class KTX2File {
       : 0;
   }
 
-  getKeyValue(key: string): Object | null {
+  getKeyValue(destination: Uint8Array): number {
     return this.#nativeKTX2FileHandle !== null
-      ? NativeBasisUniversal.getKeyValue(this.#nativeKTX2FileHandle, key)
-      : null;
+      ? NativeBasisUniversal.getKeyValue(
+          this.#nativeKTX2FileHandle,
+          destination.buffer
+        )
+      : 0;
   }
 
   getWidth(): Int32 {
@@ -202,10 +209,17 @@ export class KTX2File {
     );
   }
 
-  getETC1SImageDescImageFlags(): Int32 {
+  getETC1SImageDescImageFlags(
+    levelIndex: Int32,
+    layerIndex: Int32,
+    faceIndex: Int32
+  ): Int32 {
     return this.#nativeKTX2FileHandle !== null
       ? NativeBasisUniversal.getETC1SImageDescImageFlags(
-          this.#nativeKTX2FileHandle
+          this.#nativeKTX2FileHandle,
+          levelIndex,
+          layerIndex,
+          faceIndex
         )
       : 0;
   }
@@ -214,7 +228,7 @@ export class KTX2File {
     level: Int32,
     layerIndex: Int32,
     faceIndex: Int32
-  ): Object | null {
+  ): KTX2ImageLevelInfo | null {
     return this.#nativeKTX2FileHandle !== null
       ? NativeBasisUniversal.getImageLevelInfo(
           this.#nativeKTX2FileHandle,
@@ -225,11 +239,18 @@ export class KTX2File {
       : null;
   }
 
-  getImageTranscodedSizeInBytes(level: Int32, format: Int32): Int32 {
+  getImageTranscodedSizeInBytes(
+    levelIndex: Int32,
+    layerIndex: Int32,
+    faceIndex: Int32,
+    format: Int32
+  ): Int32 {
     return this.#nativeKTX2FileHandle !== null
       ? NativeBasisUniversal.getImageTranscodedSizeInBytes(
           this.#nativeKTX2FileHandle,
-          level,
+          levelIndex,
+          layerIndex,
+          faceIndex,
           format
         )
       : 0;
@@ -244,24 +265,26 @@ export class KTX2File {
 
   transcodeImage(
     dst: Uint8Array,
-    dstSize: Int32,
-    level: Int32,
-    format: Int32,
-    decodeFlags: Int32,
+    levelIndex: Int32,
+    layerIndex: Int32,
     faceIndex: Int32,
-    layerIndex: Int32
-  ): boolean {
+    format: Int32,
+    getAlphaForOpaqueFormats: Int32,
+    channel0: Int32,
+    channel1: Int32
+  ): number {
     return this.#nativeKTX2FileHandle !== null
       ? NativeBasisUniversal.transcodeImage(
           this.#nativeKTX2FileHandle,
           dst.buffer,
-          dstSize,
-          level,
-          format,
-          decodeFlags,
+          levelIndex,
+          layerIndex,
           faceIndex,
-          layerIndex
+          format,
+          getAlphaForOpaqueFormats,
+          channel0,
+          channel1
         )
-      : false;
+      : 0;
   }
 }

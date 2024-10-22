@@ -17,10 +17,10 @@ m_is_valid(false),
 m_magic(0)
 {
   size_t length = buffer.size(rt);
-  
+
   // Copy data directly from the input buffer to m_file
   std::memcpy(m_file.data(), buffer.data(rt), length);
-  
+
   if (!m_transcoder.init(m_file.data(), m_file.size()))
   {
 #if BASISU_DEBUG_PRINTF
@@ -29,9 +29,9 @@ m_magic(0)
     assert(0);
     m_file.clear();
   }
-  
+
   m_is_valid = true;
-  
+
   // Initialized after validation
   m_magic = KTX2_MAGIC;
 }
@@ -41,7 +41,7 @@ bool KTX2File::isValid()
   assert(m_magic == KTX2_MAGIC);
   if (m_magic != KTX2_MAGIC)
     return false;
-  
+
   return m_is_valid;
 }
 
@@ -50,7 +50,7 @@ void KTX2File::close()
   assert(m_magic == KTX2_MAGIC);
   if (m_magic != KTX2_MAGIC)
     return;
-  
+
   m_file.clear();
   m_transcoder.clear();
 }
@@ -65,7 +65,7 @@ bool KTX2File::hasKey(std::string key_name)
   assert(m_magic == KTX2_MAGIC);
   if (m_magic != KTX2_MAGIC)
     return false;
-  
+
   return m_transcoder.find_key(key_name) != nullptr;
 }
 
@@ -74,7 +74,7 @@ uint32_t KTX2File::getTotalKeys()
   assert(m_magic == KTX2_MAGIC);
   if (m_magic != KTX2_MAGIC)
     return 0;
-  
+
   return m_transcoder.get_key_values().size();
 }
 
@@ -83,7 +83,7 @@ std::string KTX2File::getKey(uint32_t index)
   assert(m_magic == KTX2_MAGIC);
   if (m_magic != KTX2_MAGIC)
     return std::string("");
-  
+
   return std::string((const char*)m_transcoder.get_key_values()[index].m_key.data());
 }
 
@@ -92,7 +92,7 @@ uint32_t KTX2File::getKeyValueSize(std::string key_name)
   assert(m_magic == KTX2_MAGIC);
   if (m_magic != KTX2_MAGIC)
     return 0;
-  
+
   const uint8_vec* p = m_transcoder.find_key(key_name);
   return p ? p->size() : 0;
 }
@@ -246,7 +246,7 @@ uint32_t KTX2File::getETC1SImageDescImageFlags(uint32_t level_index, uint32_t la
   assert(m_magic == KTX2_MAGIC);
   if (m_magic != KTX2_MAGIC)
     return 0;
-  
+
   return m_transcoder.get_etc1s_image_descs_image_flags(level_index, layer_index, face_index);
 }
 
@@ -254,17 +254,17 @@ basist::ktx2_image_level_info KTX2File::getImageLevelInfo(uint32_t level_index, 
 {
   basist::ktx2_image_level_info info;
   memset(&info, 0, sizeof(info));
-  
+
   assert(m_magic == KTX2_MAGIC);
   if (m_magic != KTX2_MAGIC)
     return info;
-  
+
   if (!m_transcoder.get_image_level_info(info, level_index, layer_index, face_index))
   {
     assert(0);
     return info;
   }
-  
+
   return info;
 }
 
@@ -273,18 +273,18 @@ uint32_t KTX2File::getImageTranscodedSizeInBytes(uint32_t level_index, uint32_t 
   assert(m_magic == KTX2_MAGIC);
   if (m_magic != KTX2_MAGIC)
     return 0;
-  
+
   if (format >= (int)basist::transcoder_texture_format::cTFTotalTextureFormats)
     return 0;
-  
+
   basist::ktx2_image_level_info info;
   if (!m_transcoder.get_image_level_info(info, level_index, layer_index, face_index))
     return 0;
-  
+
   uint32_t orig_width = info.m_orig_width, orig_height = info.m_orig_height, total_blocks = info.m_total_blocks;
-  
+
   const basist::transcoder_texture_format transcoder_format = static_cast<basist::transcoder_texture_format>(format);
-  
+
   if (basist::basis_transcoder_format_is_uncompressed(transcoder_format))
   {
     const uint32_t bytes_per_pixel = basist::basis_get_uncompressed_bytes_per_pixel(transcoder_format);
@@ -295,7 +295,7 @@ uint32_t KTX2File::getImageTranscodedSizeInBytes(uint32_t level_index, uint32_t 
   else
   {
     const uint32_t bytes_per_block = basist::basis_get_bytes_per_block_or_pixel(transcoder_format);
-    
+
     if (transcoder_format == basist::transcoder_texture_format::cTFPVRTC1_4_RGB || transcoder_format == basist::transcoder_texture_format::cTFPVRTC1_4_RGBA)
     {
       const uint32_t width = (orig_width + 3) & ~3;
@@ -303,7 +303,7 @@ uint32_t KTX2File::getImageTranscodedSizeInBytes(uint32_t level_index, uint32_t 
       const uint32_t size_in_bytes = (std::max(8U, width) * std::max(8U, height) * 4 + 7) / 8;
       return size_in_bytes;
     }
-    
+
     return total_blocks * bytes_per_block;
   }
 }
@@ -313,41 +313,49 @@ uint32_t KTX2File::startTranscoding()
   assert(m_magic == KTX2_MAGIC);
   if (m_magic != KTX2_MAGIC)
     return 0;
-  
+
   return m_transcoder.start_transcoding();
 }
 
-uint32_t KTX2File::transcodeImage(jsi::Object& destination, uint32_t level_index, uint32_t layer_index, uint32_t face_index, uint32_t format, uint32_t get_alpha_for_opaque_formats, int channel0, int channel1)
+uint32_t KTX2File::transcodeImage(jsi::Runtime& rt,
+                                  jsi::Object& destination,
+                                  uint32_t level_index,
+                                  uint32_t layer_index,
+                                  uint32_t face_index,
+                                  uint32_t format,
+                                  uint32_t get_alpha_for_opaque_formats,
+                                  int channel0,
+                                  int channel1)
 {
   assert(m_magic == KTX2_MAGIC);
   if (m_magic != KTX2_MAGIC)
     return 0;
-  
+
   if (format >= (int)basist::transcoder_texture_format::cTFTotalTextureFormats)
     return 0;
-  
+
   const basist::transcoder_texture_format transcoder_format = static_cast<basist::transcoder_texture_format>(format);
-  
+
   basist::ktx2_image_level_info info;
   if (!m_transcoder.get_image_level_info(info, level_index, layer_index, face_index))
     return 0;
-  
+
   uint32_t orig_width = info.m_orig_width, orig_height = info.m_orig_height, total_blocks = info.m_total_blocks;
-  
+
   basisu::vector<uint8_t> dst_data;
-  
+
   uint32_t flags = get_alpha_for_opaque_formats ? basist::cDecodeFlagsTranscodeAlphaDataToOpaqueFormats : 0;
-  
+
   uint32_t status;
-  
+
   if (basist::basis_transcoder_format_is_uncompressed(transcoder_format))
   {
     const uint32_t bytes_per_pixel = basist::basis_get_uncompressed_bytes_per_pixel(transcoder_format);
     const uint32_t bytes_per_line = orig_width * bytes_per_pixel;
     const uint32_t bytes_per_slice = bytes_per_line * orig_height;
-    
+
     dst_data.resize(bytes_per_slice);
-    
+
     status = m_transcoder.transcode_image_level(
                                                 level_index, layer_index, face_index,
                                                 dst_data.data(), orig_width * orig_height,
@@ -361,9 +369,9 @@ uint32_t KTX2File::transcodeImage(jsi::Object& destination, uint32_t level_index
   else
   {
     uint32_t bytes_per_block = basist::basis_get_bytes_per_block_or_pixel(transcoder_format);
-    
+
     uint32_t required_size = total_blocks * bytes_per_block;
-    
+
     if (transcoder_format == basist::transcoder_texture_format::cTFPVRTC1_4_RGB || transcoder_format == basist::transcoder_texture_format::cTFPVRTC1_4_RGBA)
     {
       const uint32_t width = (orig_width + 3) & ~3;
@@ -371,9 +379,9 @@ uint32_t KTX2File::transcodeImage(jsi::Object& destination, uint32_t level_index
       required_size = (std::max(8U, width) * std::max(8U, height) * 4 + 7) / 8;
       assert(required_size >= total_blocks * bytes_per_block);
     }
-    
+
     dst_data.resize(required_size);
-    
+
     status = m_transcoder.transcode_image_level(
                                                 level_index, layer_index, face_index,
                                                 dst_data.data(), dst_data.size() / bytes_per_block,
@@ -384,8 +392,13 @@ uint32_t KTX2File::transcodeImage(jsi::Object& destination, uint32_t level_index
                                                 channel0, channel1,
                                                 nullptr);
   }
-  
-  // TODO: Copy dst_data to destination object.
+
+  auto arrayBuffer = destination.getArrayBuffer(rt);
+
+  auto outputBuffer = jsi::ArrayBuffer(std::move(arrayBuffer));
+  memcpy(outputBuffer.data(rt), dst_data.data(), dst_data.size());
+  destination.setProperty(rt, jsi::PropNameID::forAscii(rt, "buffer"), outputBuffer);
+
   return status;
 }
 
@@ -394,23 +407,22 @@ uint32_t KTX2File::getDFD(jsi::Runtime &rt, jsi::Object& destination)
   assert(m_magic == KTX2_MAGIC);
   if (m_magic != KTX2_MAGIC)
     return 0;
-  
+
   auto arrayBuffer = destination.getArrayBuffer(rt);
-  
+
   const uint8_vec &dst_data = m_transcoder.get_dfd();
-  
+
   if (dst_data.size()) {
     auto outputBuffer = jsi::ArrayBuffer(std::move(arrayBuffer));
     memcpy(outputBuffer.data(rt), dst_data.data(), dst_data.size());
     destination.setProperty(rt, jsi::PropNameID::forAscii(rt, "buffer"), outputBuffer);
   }
-  
+
   return 1;
 }
 
-// TODO: Implement missing methods
-// uint32_t transcodeImage
-// uint32_t getKeyValue(std::string key_name, const emscripten::val& dst)
-// ktx2_header_js getHeader()
-// uint32_t getDFD(const emscripten::val& dst)
+basist::ktx2_header KTX2File::getHeader() {
+  return m_transcoder.get_header();
+}
+
 }

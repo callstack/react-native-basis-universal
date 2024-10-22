@@ -334,8 +334,25 @@ int ReactNativeBasisUniversal::getDFD(jsi::Runtime &rt, jsi::Object handle, jsi:
 }
 
 jsi::Object ReactNativeBasisUniversal::getHeader(jsi::Runtime &rt, jsi::Object handle) {
-  // TODO: Implement getHeader
-  return jsi::Object(rt);
+  auto ktx2Handle = tryGetKTX2Handle(rt, handle);
+  auto nativeHeader = ktx2Handle->getHeader();
+  return Bridging<KTX2Header>::toJs(rt, {
+      .dfdByteLength = nativeHeader.m_dfd_byte_length,
+      .dfdByteOffset = nativeHeader.m_dfd_byte_offset,
+      .faceCount = nativeHeader.m_face_count,
+      .layerCount = nativeHeader.m_layer_count,
+      .levelCount = nativeHeader.m_level_count,
+      .vkFormat = nativeHeader.m_vk_format,
+      .typeSize = nativeHeader.m_type_size,
+      .pixelWidth = nativeHeader.m_pixel_width,
+      .pixelHeight = nativeHeader.m_pixel_height,
+      .pixelDepth = nativeHeader.m_pixel_depth,
+      .supercompressionScheme = nativeHeader.m_supercompression_scheme,
+      .kvdByteLength = nativeHeader.m_kvd_byte_length,
+      .kvdByteOffset = nativeHeader.m_kvd_byte_offset,
+      .sgdByteLength = nativeHeader.m_sgd_byte_length,
+      .sgdByteOffset = nativeHeader.m_sgd_byte_offset
+    }, this->jsInvoker_);
 }
 
 bool ReactNativeBasisUniversal::hasKey(jsi::Runtime &rt, jsi::Object handle, jsi::String key) {
@@ -355,36 +372,53 @@ int ReactNativeBasisUniversal::getKeyValueSize(jsi::Runtime &rt, jsi::Object han
   return ktx2Handle->getKeyValueSize(key.utf8(rt));
 }
 
-jsi::Object ReactNativeBasisUniversal::getKeyValue(jsi::Runtime &rt, jsi::Object handle, jsi::String key) {
-  // TODO: Implement getKeyValue
-  return jsi::Object(rt);
-}
-
-int ReactNativeBasisUniversal::getETC1SImageDescImageFlags(jsi::Runtime &rt, jsi::Object handle) {
-  auto ktx2Handle = tryGetKTX2Handle(rt, handle);
-  // TODO: Fix this
-  //  return ktx2Handle->getETC1SImageDescImageFlags();
-  return 0;
-}
-
 jsi::Object ReactNativeBasisUniversal::getImageLevelInfo(jsi::Runtime &rt, jsi::Object handle, int level, int layerIndex, int faceIndex) {
   auto ktx2Handle = tryGetKTX2Handle(rt, handle);
-  // TODO: Fix this
-  ktx2Handle->getImageLevelInfo(level, layerIndex, faceIndex);
-  return jsi::Object(rt);
+  auto nativeInfo = ktx2Handle->getImageLevelInfo(level, layerIndex, faceIndex);
+  return Bridging<KTX2ImageLevelInfo>::toJs(rt, {
+    .levelIndex = nativeInfo.m_level_index,
+    .layerIndex = nativeInfo.m_layer_index,
+    .faceIndex = nativeInfo.m_face_index,
+    .origWidth = nativeInfo.m_orig_width,
+    .origHeight = nativeInfo.m_orig_height,
+    .width = nativeInfo.m_width,
+    .height = nativeInfo.m_height,
+    .numBlocksX = nativeInfo.m_num_blocks_x,
+    .numBlocksY = nativeInfo.m_num_blocks_y,
+    .totalBlocks = nativeInfo.m_total_blocks,
+    .alphaFlag = nativeInfo.m_alpha_flag,
+    .iframeFlag = nativeInfo.m_iframe_flag
+    }, this->jsInvoker_);
 }
 
-int ReactNativeBasisUniversal::getImageTranscodedSizeInBytes(jsi::Runtime &rt, jsi::Object handle, int level, int format) {
+int ReactNativeBasisUniversal::getImageTranscodedSizeInBytes(jsi::Runtime &rt, jsi::Object handle, int levelIndex, int layerIndex, int faceIndex, int format) {
   auto ktx2Handle = tryGetKTX2Handle(rt, handle);
-  // TODO: Fix this
-  // TODO: Implement getImageTranscodedSizeInBytes
-  return 0;
+  return ktx2Handle->getImageTranscodedSizeInBytes(levelIndex, layerIndex, faceIndex, format);
+}
+
+// TODO: Used in IREngine
+int ReactNativeBasisUniversal::transcodeImage(jsi::Runtime &rt, jsi::Object handle, jsi::Object dst, int levelIndex, int layerIndex, int faceIndex, int format, int getAlphaForOpaqueFormats, int channel0, int channel1) {
+  auto ktx2Handle = tryGetKTX2Handle(rt, handle);
+  return ktx2Handle->transcodeImage(rt,
+                             dst,
+                             levelIndex,
+                             layerIndex,
+                             faceIndex,
+                             format,
+                             getAlphaForOpaqueFormats,
+                             channel0,
+                             channel1);
 }
 
 
-bool ReactNativeBasisUniversal::transcodeImage(jsi::Runtime &rt, jsi::Object handle, jsi::Object dst, int dstSize, int level, int format, int decodeFlags, int faceIndex, int layerIndex) {
-  // TODO: Implement transcodeImage
-  return false;
+int ReactNativeBasisUniversal::getETC1SImageDescImageFlags(jsi::Runtime &rt, jsi::Object handle, int levelIndex, int layerIndex, int faceIndex) {
+  auto ktx2Handle = tryGetKTX2Handle(rt, handle);
+  return ktx2Handle->getETC1SImageDescImageFlags(levelIndex, layerIndex, faceIndex);
+}
+
+int ReactNativeBasisUniversal::getKeyValue(jsi::Runtime &rt, jsi::Object handle, jsi::Object destination) {
+  // TODO: Not implemented (Not used in IREngine)
+  return 0;
 }
 
 }

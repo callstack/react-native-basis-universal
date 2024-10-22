@@ -57,100 +57,72 @@ function dumpKTX2FileDesc(ktx2File: KTX2File) {
   console.log('--');
 
   console.log('--');
-  console.log('Key values:');
-  var key_index;
-  for (key_index = 0; key_index < ktx2File.getTotalKeys(); key_index++) {
-    var key_name = ktx2File.getKey(key_index);
-    console.log('Key ' + key_index + ': "' + key_name + '"');
+  console.log('Image level information:');
+  let level_index;
+  for (level_index = 0; level_index < ktx2File.getLevels(); level_index++) {
+    var layer_index;
+    for (
+      layer_index = 0;
+      layer_index < Math.max(1, ktx2File.getLayers());
+      layer_index++
+    ) {
+      var face_index;
+      for (face_index = 0; face_index < ktx2File.getFaces(); face_index++) {
+        var imageLevelInfo = ktx2File.getImageLevelInfo(
+          level_index,
+          layer_index,
+          face_index
+        );
 
-    // if (valSize != 0) {
-    //   var val_data = new Uint8Array(valSize);
-    //   var status = ktx2File.getKeyValue(key_name, val_data);
-    //   if (!status) console.log('getKeyValue() failed');
-    //   else {
-    //     console.log('value size: ' + val_data.length);
-    //     var i,
-    //       str = '';
-    //
-    //     for (i = 0; i < val_data.length; i++) {
-    //       var c = val_data[i];
-    //       str = str + String.fromCharCode(c);
-    //     }
-    //
-    //     console.log(str);
-    //   }
-    // } else console.log('<empty value>');
+        if (!imageLevelInfo) {
+          continue;
+        }
+
+        console.log(
+          'level: ' +
+            level_index +
+            ' layer: ' +
+            layer_index +
+            ' face: ' +
+            face_index
+        );
+
+        console.log('orig_width: ' + imageLevelInfo.origWidth);
+        console.log('orig_height: ' + imageLevelInfo.origHeight);
+        console.log('width: ' + imageLevelInfo.width);
+        console.log('height: ' + imageLevelInfo.height);
+        console.log('numBlocksX: ' + imageLevelInfo.numBlocksX);
+        console.log('numBlocksY: ' + imageLevelInfo.numBlocksY);
+        console.log('totalBlocks: ' + imageLevelInfo.totalBlocks);
+        console.log('alphaFlag: ' + imageLevelInfo.alphaFlag);
+        console.log('iframeFlag: ' + imageLevelInfo.iframeFlag);
+
+        console.log('--');
+      }
+    }
   }
 
-  // console.log('--');
-  // console.log('Image level information:');
-  // var level_index;
-  // for (level_index = 0; level_index < ktx2File.getLevels(); level_index++) {
-  //   var layer_index;
-  //   for (
-  //     layer_index = 0;
-  //     layer_index < Math.max(1, ktx2File.getLayers());
-  //     layer_index++
-  //   ) {
-  //     var face_index;
-  //     for (face_index = 0; face_index < ktx2File.getFaces(); face_index++) {
-  //       var imageLevelInfo = ktx2File.getImageLevelInfo(
-  //         level_index,
-  //         layer_index,
-  //         face_index
-  //       );
-  //
-  //       console.log(
-  //         'level: ' +
-  //           level_index +
-  //           ' layer: ' +
-  //           layer_index +
-  //           ' face: ' +
-  //           face_index
-  //       );
-  //
-  //       console.log('orig_width: ' + imageLevelInfo.origWidth);
-  //       console.log('orig_height: ' + imageLevelInfo.origHeight);
-  //       console.log('width: ' + imageLevelInfo.width);
-  //       console.log('height: ' + imageLevelInfo.height);
-  //       console.log('numBlocksX: ' + imageLevelInfo.numBlocksX);
-  //       console.log('numBlocksY: ' + imageLevelInfo.numBlocksY);
-  //       console.log('totalBlocks: ' + imageLevelInfo.totalBlocks);
-  //       console.log('alphaFlag: ' + imageLevelInfo.alphaFlag);
-  //       console.log('iframeFlag: ' + imageLevelInfo.iframeFlag);
-  //       if (ktx2File.isETC1S())
-  //         console.log(
-  //           'ETC1S image desc image flags: ' +
-  //             ktx2File.getETC1SImageDescImageFlags(
-  //               level_index,
-  //               layer_index,
-  //               face_index
-  //             )
-  //         );
-  //
-  //       console.log('--');
-  //     }
-  //   }
-  // }
-  // console.log('--');
   console.log('KTX2 header:');
-  // var hdr = ktx2File.getHeader();
-  //
-  // console.log('vkFormat: ' + hdr.vkFormat);
-  // console.log('typeSize: ' + hdr.typeSize);
-  // console.log('pixelWidth: ' + hdr.pixelWidth);
-  // console.log('pixelHeight: ' + hdr.pixelHeight);
-  // console.log('pixelDepth: ' + hdr.pixelDepth);
-  // console.log('layerCount: ' + hdr.layerCount);
-  // console.log('faceCount: ' + hdr.faceCount);
-  // console.log('levelCount: ' + hdr.levelCount);
-  // console.log('superCompressionScheme: ' + hdr.supercompressionScheme);
-  // console.log('dfdByteOffset: ' + hdr.dfdByteOffset);
-  // console.log('dfdByteLength: ' + hdr.dfdByteLength);
-  // console.log('kvdByteOffset: ' + hdr.kvdByteOffset);
-  // console.log('kvdByteLength: ' + hdr.kvdByteLength);
-  // console.log('sgdByteOffset: ' + hdr.sgdByteOffset);
-  // console.log('sgdByteLength: ' + hdr.sgdByteLength);
+  var hdr = ktx2File.getHeader();
+  if (hdr == null) {
+    return;
+  }
+
+  console.log('vkFormat: ' + hdr.vkFormat);
+  console.log('typeSize: ' + hdr.typeSize);
+  console.log('pixelWidth: ' + hdr.pixelWidth);
+  console.log('pixelHeight: ' + hdr.pixelHeight);
+  console.log('pixelDepth: ' + hdr.pixelDepth);
+  console.log('layerCount: ' + hdr.layerCount);
+  console.log('faceCount: ' + hdr.faceCount);
+  console.log('levelCount: ' + hdr.levelCount);
+  console.log('superCompressionScheme: ' + hdr.supercompressionScheme);
+  console.log('dfdByteOffset: ' + hdr.dfdByteOffset);
+  console.log('dfdByteLength: ' + hdr.dfdByteLength);
+  console.log('kvdByteOffset: ' + hdr.kvdByteOffset);
+  console.log('kvdByteLength: ' + hdr.kvdByteLength);
+  console.log('sgdByteOffset: ' + hdr.sgdByteOffset);
+  console.log('sgdByteLength: ' + hdr.sgdByteLength);
 
   console.log('------');
 }
@@ -287,9 +259,43 @@ const BasisEncoderPlayground = () => {
       console.log('actualKTX2FileData', actualKTX2FileData.buffer.byteLength);
 
       console.log('----- KT2XFile -----');
+
+      const t2 = performance.now();
       const ktx2File = new KTX2File(new Uint8Array(actualKTX2FileData));
 
       dumpKTX2FileDesc(ktx2File);
+
+      if (!ktx2File.startTranscoding()) {
+        console.log('startTranscoding failed');
+        console.warn('startTranscoding failed');
+        return;
+      }
+
+      const format = 22; // cTFBC6H
+      const dstSize = ktx2File.getImageTranscodedSizeInBytes(0, 0, 0, format);
+      const dst = new Uint8Array(dstSize);
+
+      console.log('Dst output', dst.slice(0, 100));
+      console.log('Dst size: ' + dstSize);
+
+      if (!ktx2File.transcodeImage(dst, 0, 0, 0, format, 0, -1, -1)) {
+        console.log('ktx2File.transcodeImage failed');
+        console.warn('transcodeImage failed');
+        ktx2File.close();
+        ktx2File.delete();
+
+        return;
+      }
+
+      const t3 = performance.now();
+      console.log(
+        `Call to ktx2File.transcodeImage took ${(t3 - t2) / 1000} seconds.`
+      );
+
+      console.log('Dst output after', dst.slice(0, 100));
+
+      ktx2File.close();
+      ktx2File.delete();
     } catch (error) {
       console.error('Encoding failed:', error);
     }

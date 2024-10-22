@@ -13,11 +13,47 @@
 
 namespace facebook::react {
 
-using KTX2Header = NativeBasisUniversalKTX2Header<uint32_t, uint32_t, uint32_t, uint32_t, uint32_t, uint32_t, uint32_t, uint32_t, uint32_t, uint32_t, uint32_t, uint32_t, uint32_t, bool, bool>;
+using KTX2Header = NativeBasisUniversalKTX2Header<
+    /* vkFormat */               uint32_t,
+    /* typeSize */               uint32_t,
+    /* pixelWidth */             uint32_t,
+    /* pixelHeight */            uint32_t,
+    /* pixelDepth */             uint32_t,
+    /* layerCount */             uint32_t,
+    /* faceCount */              uint32_t,
+    /* levelCount */             uint32_t,
+    /* supercompressionScheme */ uint32_t,
+    /* dfdByteOffset */          uint32_t,
+    /* dfdByteLength */          uint32_t,
+    /* kvdByteOffset */          uint32_t,
+    /* kvdByteLength */          uint32_t,
+    /* sgdByteOffset */          uint32_t,
+    /* sgdByteLength */          uint32_t
+>;
 
 template <>
 struct Bridging<KTX2Header>
 : NativeBasisUniversalKTX2HeaderBridging<KTX2Header> {};
+
+
+using KTX2ImageLevelInfo = NativeBasisUniversalKTX2ImageLevelInfo<
+    /* levelIndex */  uint32_t,
+    /* layerIndex */  uint32_t,
+    /* faceIndex */   uint32_t,
+    /* origWidth */   uint32_t,
+    /* origHeight */  uint32_t,
+    /* width */       uint32_t,
+    /* height: */     uint32_t,
+    /* numBlocksX */  uint32_t,
+    /* numBlocksY */  uint32_t,
+    /* totalBlocks */ uint32_t,
+    /* alphaFlag */   bool,
+    /* iframeFlag */  bool
+>;
+
+template <>
+struct Bridging<KTX2ImageLevelInfo>
+: NativeBasisUniversalKTX2ImageLevelInfoBridging<KTX2ImageLevelInfo> {};
 
 using namespace facebook;
 
@@ -70,7 +106,7 @@ public:
   int getTotalKeys(jsi::Runtime &rt, jsi::Object handle) override;
   jsi::String getKey(jsi::Runtime &rt, jsi::Object handle, int index) override;
   int getKeyValueSize(jsi::Runtime &rt, jsi::Object handle, jsi::String key) override;
-  jsi::Object getKeyValue(jsi::Runtime &rt, jsi::Object handle, jsi::String key) override;
+  int getKeyValue(jsi::Runtime &rt, jsi::Object handle, jsi::Object destination) override;
   int getWidth(jsi::Runtime &rt, jsi::Object handle) override;
   int getHeight(jsi::Runtime &rt, jsi::Object handle) override;
   int getFaces(jsi::Runtime &rt, jsi::Object handle) override;
@@ -89,13 +125,13 @@ public:
   int getDFDChannelID0(jsi::Runtime &rt, jsi::Object handle) override;
   int getDFDChannelID1(jsi::Runtime &rt, jsi::Object handle) override;
   bool isVideo(jsi::Runtime &rt, jsi::Object handle) override;
-  int getETC1SImageDescImageFlags(jsi::Runtime &rt, jsi::Object handle) override;
+  int getETC1SImageDescImageFlags(jsi::Runtime &rt, jsi::Object handle, int levelIndex, int layerIndex, int faceIndex) override;
   jsi::Object getImageLevelInfo(jsi::Runtime &rt, jsi::Object handle, int level, int layerIndex, int faceIndex) override;
-  int getImageTranscodedSizeInBytes(jsi::Runtime &rt, jsi::Object handle, int level, int format) override;
+  int getImageTranscodedSizeInBytes(jsi::Runtime &rt, jsi::Object handle, int levelIndex, int layerIndex, int faceIndex, int format) override;
   bool startTranscoding(jsi::Runtime &rt, jsi::Object handle) override;
-  bool transcodeImage(jsi::Runtime &rt, jsi::Object handle, jsi::Object dst, int dstSize, int level, int format, int decodeFlags, int faceIndex, int layerIndex) override;
+  int transcodeImage(jsi::Runtime &rt, jsi::Object handle, jsi::Object dst, int levelIndex, int layerIndex, int faceIndex, int format, int getAlphaForOpaqueFormats, int channel0, int channel1) override;
 
- 
+
 
 private:
   bool basis_initialized_flag;

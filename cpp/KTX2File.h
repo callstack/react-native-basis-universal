@@ -42,9 +42,18 @@ public:
   bool isVideo();
   uint32_t getETC1SImageDescImageFlags(uint32_t level_index, uint32_t layer_index, uint32_t face_index);
   basist::ktx2_image_level_info getImageLevelInfo(uint32_t level_index, uint32_t layer_index, uint32_t face_index);
+  basist::ktx2_header getHeader();
   uint32_t getImageTranscodedSizeInBytes(uint32_t level_index, uint32_t layer_index, uint32_t face_index, uint32_t format);
   uint32_t startTranscoding();
-  uint32_t transcodeImage(jsi::Object& destination, uint32_t level_index, uint32_t layer_index, uint32_t face_index, uint32_t format, uint32_t get_alpha_for_opaque_formats, int channel0, int channel1);
+  uint32_t transcodeImage(jsi::Runtime& rt,
+                          jsi::Object& destination,
+                          uint32_t level_index,
+                          uint32_t layer_index,
+                          uint32_t face_index,
+                          uint32_t format,
+                          uint32_t get_alpha_for_opaque_formats,
+                          int channel0,
+                          int channel1);
   uint32_t getDFD(jsi::Runtime &rt, jsi::Object& destination);
   
 private:
