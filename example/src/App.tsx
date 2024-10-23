@@ -14,6 +14,7 @@ import {
   initializeBasis,
   BasisEncoder,
   KTX2File,
+  BasisFile,
 } from '@callstack/react-native-basis-universal';
 import RNFetchBlob from 'react-native-blob-util';
 
@@ -127,8 +128,14 @@ function dumpKTX2FileDesc(ktx2File: KTX2File) {
   console.log('------');
 }
 
-const BlobImage = ({ arrayBuffer }: { arrayBuffer?: Uint8Array | null }) => {
-  if (!arrayBuffer) {
+const BlobImage = ({
+  arrayBuffer,
+  isTranscoding,
+}: {
+  arrayBuffer?: Uint8Array | null;
+  isTranscoding: boolean;
+}) => {
+  if (!arrayBuffer || isTranscoding) {
     return null;
   }
 
@@ -171,6 +178,65 @@ const BasisEncoderPlayground = () => {
       ...prevOptions,
       [option]: !prevOptions[option],
     }));
+  };
+
+  const transcode = async () => {
+    if (!image) {
+      Alert.alert('No image to transcode');
+      return;
+    }
+    initializeBasis();
+
+    const t0 = performance.now();
+    const basisFile = new BasisFile(new Uint8Array(image));
+
+    const width = basisFile.getImageWidth(0, 0);
+    const height = basisFile.getImageHeight(0, 0);
+    const images = basisFile.getNumImages();
+    const levels = basisFile.getNumLevels(0);
+    const has_alpha = basisFile.getHasAlpha();
+    const is_hdr = basisFile.isHDR();
+    console.log({
+      width,
+      height,
+      images,
+      levels,
+      has_alpha,
+      is_hdr,
+    });
+
+    if (!basisFile.startTranscoding()) {
+      console.log('startTranscoding failed');
+      console.warn('startTranscoding failed');
+      basisFile.close();
+      basisFile.delete();
+      return;
+    }
+
+    const format = 22; // cTFBC6H
+    const dstSize = basisFile.getImageTranscodedSizeInBytes(0, 0, format);
+    const dst = new Uint8Array(dstSize);
+
+    console.log('Dst output', dst.slice(0, 100));
+    console.log('Dst size: ', dstSize);
+
+    if (!basisFile.transcodeImage(dst, 0, 0, format, 0, 0)) {
+      console.log('basisFile.transcodeImage failed');
+      console.warn('transcodeImage failed');
+      basisFile.close();
+      basisFile.delete();
+
+      return;
+    }
+
+    const t1 = performance.now();
+    console.log('Transcode took', (t1 - t0) / 1000, 'seconds');
+
+    console.log('Dst output after', dst.slice(0, 100));
+    console.log('Dst size: ', dstSize);
+
+    basisFile.close();
+    basisFile.delete();
   };
 
   const encode = async () => {
@@ -301,6 +367,8 @@ const BasisEncoderPlayground = () => {
     }
   };
 
+  const isTranscoding = file.endsWith('.basis');
+
   return (
     <View style={styles.container}>
       <Picker
@@ -311,6 +379,7 @@ const BasisEncoderPlayground = () => {
         <Picker.Item label="desk.exr" value="desk.exr" />
         <Picker.Item label="CandleGlass.exr" value="CandleGlass.exr" />
         <Picker.Item label="kodim01.png" value="kodim01.png" />
+        <Picker.Item label="desk.basis" value="desk.basis" />
       </Picker>
       <View style={styles.optionsContainer}>
         {Object.entries(options).map(([key, value]) => (
@@ -321,9 +390,12 @@ const BasisEncoderPlayground = () => {
           </View>
         ))}
       </View>
-      <Button title="Encode" onPress={encode} />
+      <Button
+        title={isTranscoding ? 'Transcode' : 'Encode'}
+        onPress={isTranscoding ? transcode : encode}
+      />
       <View style={{ height: 200, width: 200 }}>
-        <BlobImage arrayBuffer={image} />
+        <BlobImage arrayBuffer={image} isTranscoding={isTranscoding} />
       </View>
     </View>
   );

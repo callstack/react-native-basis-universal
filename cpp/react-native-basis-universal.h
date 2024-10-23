@@ -131,7 +131,22 @@ public:
   bool startTranscoding(jsi::Runtime &rt, jsi::Object handle) override;
   int transcodeImage(jsi::Runtime &rt, jsi::Object handle, jsi::Object dst, int levelIndex, int layerIndex, int faceIndex, int format, int getAlphaForOpaqueFormats, int channel0, int channel1) override;
 
-
+  // Basis file
+  virtual jsi::Object createBasisFile(jsi::Runtime &rt, jsi::Object data) override;
+  void closeBasisFile(jsi::Runtime &rt, jsi::Object handle) override;
+  bool getHasAlphaBasisFile(jsi::Runtime &rt, jsi::Object handle) override;
+  bool isUASTCBasisFile(jsi::Runtime &rt, jsi::Object handle) override;
+  bool isHDRBasisFile(jsi::Runtime &rt, jsi::Object handle) override;
+  int getNumImagesBasisFile(jsi::Runtime &rt, jsi::Object handle) override;
+  int getNumLevels(jsi::Runtime &rt, jsi::Object handle, int imageIndex) override;
+  int getImageWidthBasisFile(jsi::Runtime &rt, jsi::Object handle, int imageIndex, int levelIndex) override;
+  int getImageHeightBasisFile(jsi::Runtime &rt, jsi::Object handle, int imageIndex, int levelIndex) override;
+  int getImageTranscodedSizeInBytesBasisFile(jsi::Runtime &rt, jsi::Object handle, int imageIndex, int levelIndex, int format) override;
+  bool startTranscodingBasisFile(jsi::Runtime &rt, jsi::Object handle) override;
+  bool transcodeImageBasisFile(jsi::Runtime &rt, jsi::Object handle, jsi::Object dst, int imageIndex, int levelIndex, int format, int unused, int getAlphaForOpaqueFormats) override;
+  jsi::Object getFileDescBasisFile(jsi::Runtime &rt, jsi::Object handle) override;
+  jsi::Object getImageDescBasisFile(jsi::Runtime &rt, jsi::Object handle, int imageIndex) override;
+  jsi::Object getImageLevelDescBasisFile(jsi::Runtime &rt, jsi::Object handle, int imageIndex, int levelIndex) override;
 
 private:
   bool basis_initialized_flag;
