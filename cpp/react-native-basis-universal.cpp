@@ -1,6 +1,6 @@
 #include "react-native-basis-universal.h"
 #include "KTX2File.h"
-#include <valarray>
+#include "BasisFile.h"
 
 #define DEFINE_BASIS_ENCODER_PARAMS_SETTER(func_name, param_name, param_type) \
 void ReactNativeBasisUniversal::func_name(jsi::Runtime &rt, jsi::Object handle, param_type flag) { \
@@ -47,6 +47,15 @@ std::shared_ptr<KTX2File> tryGetKTX2Handle(jsi::Runtime& rt, jsi::Object& kt2xHa
 
   auto ktx2file = std::dynamic_pointer_cast<KTX2File>(kt2xHandle.getNativeState(rt));
   return ktx2file;
+}
+
+std::shared_ptr<BasisFile> tryGetBasisFileHandle(jsi::Runtime& rt, jsi::Object& basisFileHandle) {
+  if (!basisFileHandle.hasNativeState(rt)) {
+    return nullptr;
+  }
+
+  auto basisFile = std::dynamic_pointer_cast<BasisFile>(basisFileHandle.getNativeState(rt));
+  return basisFile;
 }
 
 ReactNativeBasisUniversal::ReactNativeBasisUniversal(std::shared_ptr<CallInvoker> jsInvoker)
@@ -396,7 +405,6 @@ int ReactNativeBasisUniversal::getImageTranscodedSizeInBytes(jsi::Runtime &rt, j
   return ktx2Handle->getImageTranscodedSizeInBytes(levelIndex, layerIndex, faceIndex, format);
 }
 
-// TODO: Used in IREngine
 int ReactNativeBasisUniversal::transcodeImage(jsi::Runtime &rt, jsi::Object handle, jsi::Object dst, int levelIndex, int layerIndex, int faceIndex, int format, int getAlphaForOpaqueFormats, int channel0, int channel1) {
   auto ktx2Handle = tryGetKTX2Handle(rt, handle);
   return ktx2Handle->transcodeImage(rt,
@@ -420,5 +428,85 @@ int ReactNativeBasisUniversal::getKeyValue(jsi::Runtime &rt, jsi::Object handle,
   // TODO: Not implemented (Not used in IREngine)
   return 0;
 }
+
+// Basis File
+
+jsi::Object ReactNativeBasisUniversal::createBasisFile(jsi::Runtime &rt, jsi::Object data) {
+  jsi::Object basisObject{rt};
+  basisObject.setNativeState(rt, std::make_shared<BasisFile>(rt, data.getArrayBuffer(rt)));
+  return basisObject;
+}
+
+void ReactNativeBasisUniversal::closeBasisFile(jsi::Runtime &rt, jsi::Object handle) {
+  auto fileHandle = tryGetBasisFileHandle(rt, handle);
+  fileHandle->close();
+}
+
+bool ReactNativeBasisUniversal::getHasAlphaBasisFile(jsi::Runtime &rt, jsi::Object handle) {
+  auto fileHandle = tryGetBasisFileHandle(rt, handle);
+  return fileHandle->getHasAlpha();
+}
+
+bool ReactNativeBasisUniversal::isUASTCBasisFile(jsi::Runtime &rt, jsi::Object handle) {
+  auto fileHandle = tryGetBasisFileHandle(rt, handle);
+  return fileHandle->isUASTC();
+}
+
+bool ReactNativeBasisUniversal::isHDRBasisFile(jsi::Runtime &rt, jsi::Object handle) {
+  auto fileHandle = tryGetBasisFileHandle(rt, handle);
+  return fileHandle->isHDR();
+}
+
+int ReactNativeBasisUniversal::getNumImagesBasisFile(jsi::Runtime &rt, jsi::Object handle) {
+  auto fileHandle = tryGetBasisFileHandle(rt, handle);
+  return fileHandle->getNumImages();
+}
+
+int ReactNativeBasisUniversal::getNumLevels(jsi::Runtime &rt, jsi::Object handle, int imageIndex) {
+  auto fileHandle = tryGetBasisFileHandle(rt, handle);
+  return fileHandle->getNumLevels(imageIndex);
+}
+
+int ReactNativeBasisUniversal::getImageWidthBasisFile(jsi::Runtime &rt, jsi::Object handle, int imageIndex, int levelIndex) {
+  auto fileHandle = tryGetBasisFileHandle(rt, handle);
+  return fileHandle->getImageWidth(imageIndex, levelIndex);
+}
+
+int ReactNativeBasisUniversal::getImageHeightBasisFile(jsi::Runtime &rt, jsi::Object handle, int imageIndex, int levelIndex) {
+  auto fileHandle = tryGetBasisFileHandle(rt, handle);
+  return fileHandle->getImageHeight(imageIndex, levelIndex);
+}
+
+int ReactNativeBasisUniversal::getImageTranscodedSizeInBytesBasisFile(jsi::Runtime &rt, jsi::Object handle, int imageIndex, int levelIndex, int format) {
+  auto fileHandle = tryGetBasisFileHandle(rt, handle);
+  return fileHandle->getImageTranscodedSizeInBytes(imageIndex, levelIndex, format);
+}
+
+bool ReactNativeBasisUniversal::startTranscodingBasisFile(jsi::Runtime &rt, jsi::Object handle) {
+  auto fileHandle = tryGetBasisFileHandle(rt, handle);
+  return fileHandle->startTranscoding();
+}
+
+bool ReactNativeBasisUniversal::transcodeImageBasisFile(jsi::Runtime &rt, jsi::Object handle, jsi::Object dst, int imageIndex, int levelIndex, int format, int unused, int getAlphaForOpaqueFormats) {
+  auto fileHandle = tryGetBasisFileHandle(rt, handle);
+  return fileHandle->transcodeImage(rt, dst, imageIndex, levelIndex, format, unused, getAlphaForOpaqueFormats);
+}
+
+jsi::Object ReactNativeBasisUniversal::getFileDescBasisFile(jsi::Runtime &rt, jsi::Object handle) {
+  // TODO: Implement getFileDescBasisFile (Not used in IREngine)
+  return jsi::Object(rt);
+}
+
+jsi::Object ReactNativeBasisUniversal::getImageDescBasisFile(jsi::Runtime &rt, jsi::Object handle, int imageIndex) {
+  // TODO: Implement getImageDescBasisFile (Not used in IREngine)
+  return jsi::Object(rt);
+}
+
+jsi::Object ReactNativeBasisUniversal::getImageLevelDescBasisFile(jsi::Runtime &rt, jsi::Object handle, int imageIndex, int levelIndex) {
+  // TODO: Implement getImageLevelDescBasisFile (Not used in IREngine)
+  return jsi::Object(rt);
+}
+
+
 
 }

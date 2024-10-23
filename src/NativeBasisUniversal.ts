@@ -7,6 +7,7 @@ import type {
 
 export type OpaqueNativeBasisHandle = UnsafeObject;
 export type OpaqueKTX2FileHandle = UnsafeObject;
+export type OpaqueNativeBasisFileHandle = UnsafeObject;
 
 export type KTX2Header = {
   vkFormat: Int32;
@@ -179,6 +180,7 @@ export interface Spec extends TurboModule {
     format: Int32
   ) => Int32;
   startTranscoding: (handle: OpaqueKTX2FileHandle) => boolean;
+
   transcodeImage: (
     handle: OpaqueKTX2FileHandle,
     dst: UnsafeObject,
@@ -190,6 +192,51 @@ export interface Spec extends TurboModule {
     channel0: Int32,
     channel1: Int32
   ) => Int32;
+
+  // Basis File
+  createBasisFile: (data: UnsafeObject) => OpaqueNativeBasisHandle;
+  closeBasisFile: (handle: OpaqueNativeBasisHandle) => void;
+  getHasAlphaBasisFile: (handle: OpaqueNativeBasisHandle) => boolean;
+  isUASTCBasisFile: (handle: OpaqueNativeBasisHandle) => boolean;
+  isHDRBasisFile: (handle: OpaqueNativeBasisHandle) => boolean;
+  getNumImagesBasisFile: (handle: OpaqueNativeBasisHandle) => Int32;
+  getNumLevels: (handle: OpaqueNativeBasisHandle, imageIndex: Int32) => Int32;
+  getImageWidthBasisFile: (
+    handle: OpaqueNativeBasisHandle,
+    imageIndex: Int32,
+    levelIndex: Int32
+  ) => Int32;
+  getImageHeightBasisFile: (
+    handle: OpaqueNativeBasisHandle,
+    imageIndex: Int32,
+    levelIndex: Int32
+  ) => Int32;
+  getImageTranscodedSizeInBytesBasisFile: (
+    handle: OpaqueNativeBasisHandle,
+    imageIndex: Int32,
+    levelIndex: Int32,
+    format: Int32
+  ) => Int32;
+  startTranscodingBasisFile: (handle: OpaqueNativeBasisHandle) => boolean;
+  transcodeImageBasisFile: (
+    handle: OpaqueNativeBasisHandle,
+    dst: UnsafeObject,
+    imageIndex: Int32,
+    levelIndex: Int32,
+    format: Int32,
+    unused: Int32,
+    getAlphaForOpaqueFormats: Int32
+  ) => boolean;
+  getFileDescBasisFile: (handle: OpaqueNativeBasisHandle) => UnsafeObject;
+  getImageDescBasisFile: (
+    handle: OpaqueNativeBasisHandle,
+    imageIndex: Int32
+  ) => UnsafeObject;
+  getImageLevelDescBasisFile: (
+    handle: OpaqueNativeBasisHandle,
+    imageIndex: Int32,
+    levelIndex: Int32
+  ) => UnsafeObject;
 }
 
 export default TurboModuleRegistry.getEnforcing<Spec>('BasisUniversal');
