@@ -10865,7 +10865,7 @@ __metadata:
     react-native: 0.75.4
     react-native-blob-util: ^0.19.11
     react-native-builder-bob: ^0.30.2
-    react-native-test-app: ^3.10.14
+    react-native-test-app: ^3.10.20
   languageName: unknown
   linkType: soft
 
@@ -10914,9 +10914,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-test-app@npm:^3.10.14":
-  version: 3.10.14
-  resolution: "react-native-test-app@npm:3.10.14"
+"react-native-test-app@npm:^3.10.20":
+  version: 3.10.20
+  resolution: "react-native-test-app@npm:3.10.20"
   dependencies:
     "@rnx-kit/react-native-host": ^0.5.0
     ajv: ^8.0.0
@@ -10926,12 +10926,12 @@ __metadata:
     semver: ^7.3.5
     uuid: ^10.0.0
   peerDependencies:
-    "@callstack/react-native-visionos": 0.73 - 0.75
+    "@callstack/react-native-visionos": 0.73 - 0.76
     "@expo/config-plugins": ">=5.0"
     react: 17.0.1 - 19.0
-    react-native: 0.66 - 0.75 || >=0.76.0-0 <0.76.0
-    react-native-macos: ^0.0.0-0 || 0.66 || 0.68 || 0.71 - 0.75
-    react-native-windows: ^0.0.0-0 || 0.66 - 0.75
+    react-native: 0.66 - 0.76 || >=0.77.0-0 <0.77.0
+    react-native-macos: ^0.0.0-0 || 0.66 || 0.68 || 0.71 - 0.76
+    react-native-windows: ^0.0.0-0 || 0.66 - 0.76
   peerDependenciesMeta:
     "@callstack/react-native-visionos":
       optional: true
@@ -10946,7 +10946,7 @@ __metadata:
     init: scripts/init.mjs
     init-test-app: scripts/init.mjs
     install-windows-test-app: windows/test-app.mjs
-  checksum: 9d602886140349b81bbd11a520bd8531790516228e3d07985175a96570ccca21f49a691c759a43c09a5cdb0a07721ed19cef89b2e0192f03d311674af711d4c0
+  checksum: 807eaf5796059d7acf7420d0da9fe018eacea1d9ee43aabf248f7747c66da1364130e7a54e41bc9e9922f44751350103ab249123e3f9b2692c05e34d1af26371
   languageName: node
   linkType: hard
 
