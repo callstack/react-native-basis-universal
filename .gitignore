@@ -30,7 +30,7 @@ DerivedData
 project.xcworkspace
 cpp/basisu
 example/ios/.xcode.env
-example/ios/*/content.xcworkspacedata
+example/ios/*.xcworkspace
 
 # Android/IJ
 #
