@@ -1,22 +1,37 @@
 # react-native-basis-universal
 
-Basis Universal GPU Texture Codec
+Basis Universal GPU Texture Codec.
+
+This is a React Native wrapper around the [Basis Universal](https://github.com/BinomialLLC/basis_universal) library.
+
+For documentation on the Basis Universal library, see the [official documentation](https://github.com/BinomialLLC/basis_universal).
 
 ## Installation
 
 ```sh
-npm install react-native-basis-universal
+yarn add @callstack/react-native-basis-universal
 ```
 
 ## Usage
 
 
 ```js
-import { multiply } from 'react-native-basis-universal';
+import {
+  initializeBasis,
+  BasisEncoder,
+  KTX2File,
+  BasisFile,
+} from '@callstack/react-native-basis-universal';
 
-// ...
+initializeBasis();
 
-const result = multiply(3, 7);
+const basisFile = new BasisFile(new Uint8Array(image));
+
+const width = basisFile.getImageWidth(0, 0);
+const height = basisFile.getImageHeight(0, 0);
+const images = basisFile.getNumImages();
+const levels = basisFile.getNumLevels(0);
+const has_alpha = basisFile.getHasAlpha();
 ```
 
 
