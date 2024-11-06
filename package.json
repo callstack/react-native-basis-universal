@@ -1,6 +1,6 @@
 {
   "name": "@callstack/react-native-basis-universal",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Basis Universal GPU Texture Codec",
   "source": "./src/index.ts",
   "main": "./lib/commonjs/index.js",
