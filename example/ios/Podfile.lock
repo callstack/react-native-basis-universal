@@ -1237,7 +1237,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - react-native-basis-universal (0.1.0):
+  - react-native-basis-universal (0.2.1):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1845,7 +1845,7 @@ SPEC CHECKSUMS:
   React-logger: d79b704bf215af194f5213a6b7deec50ba8e6a9b
   React-Mapbuffer: b982d5bba94a8bc073bda48f0d27c9b28417fae3
   React-microtasksnativemodule: 2cec1d6e126598df0f165268afa231174dd1a611
-  react-native-basis-universal: 228f3b3e396df77064173f7a26622d45e424964e
+  react-native-basis-universal: 8c4230f3b21c9cb23109ba9d8aff32deb19cd1a6
   react-native-blob-util: e6a3b23a99ac2c3d9fa48722db049a1e1808efc2
   React-nativeconfig: 8c83d992b9cc7d75b5abe262069eaeea4349f794
   React-NativeModulesApple: 9f7920224a3b0c7d04d77990067ded14cee3c614

@@ -1,6 +1,8 @@
 #include "react-native-basis-universal.h"
 #include "KTX2File.h"
 #include "BasisFile.h"
+#include <thread>
+#include <future>
 
 #define DEFINE_BASIS_ENCODER_PARAMS_SETTER(func_name, param_name, param_type) \
 void ReactNativeBasisUniversal::func_name(jsi::Runtime &rt, jsi::Object handle, param_type flag) { \
@@ -25,6 +27,12 @@ using namespace basist;
 using namespace basisu;
 
 namespace facebook::react {
+
+struct EncodeResult {
+  bool success;
+  std::vector<uint8_t> data;
+};
+
 
 class BasisEncoder : public jsi::NativeState {
 public:
@@ -89,79 +97,85 @@ int ReactNativeBasisUniversal::encode(jsi::Runtime &rt, jsi::Object handle, jsi:
     throw jsi::JSError(rt, "Image Array needs to be ArrayBuffer");
   }
 
-  auto arrayBuffer = basisFileData.getArrayBuffer(rt);
+  std::promise<EncodeResult> resultPromise;
+  std::future<EncodeResult> resultFuture = resultPromise.get_future();
 
-  if (!basis_initialized_flag)
-  {
-    assert(0);
-    return 0;
-  }
-
-  job_pool jpool(6);
-
-  // Initialize the compression parameters structure. This is the same structure that the command line tool fills in.
-  basis_compressor_params &params = encoder->m_params;
-
-  params.m_pJob_pool = &jpool;
-
-  params.m_multithreading = true;
-
-  params.m_status_output = params.m_debug;
-
-  params.m_read_source_images = false;
-  params.m_write_output_basis_or_ktx2_files = false;
-
-  basis_compressor comp;
-
-  if (!comp.init(params))
-  {
-    return 0;
-  }
-
-  basis_compressor::error_code ec = comp.process();
-
-  if (ec != basis_compressor::cECSuccess)
-  {
-    // Something failed during compression.
-    return 0;
-  }
-
-  if (params.m_create_ktx2_file)
-  {
-    // Compression succeeded, so copy the .ktx2 file bytes to the caller's buffer.
-    auto output = comp.get_output_ktx2_file();
-
-    if (!output.data()) {
+  std::thread encodingThread([this,
+                              encoder = std::move(encoder),
+                              promise = std::move(resultPromise)]() mutable {
+    
+    EncodeResult result{false, std::vector<uint8_t>()};
+    
+    try {
+      if (!basis_initialized_flag) {
+        promise.set_value(std::move(result));
+        return;
+      }
+      
+      unsigned int threads = std::thread::hardware_concurrency();
+      job_pool jpool(threads);
+      basis_compressor_params &params = encoder->m_params;
+      params.m_pJob_pool = &jpool;
+      params.m_multithreading = true;
+      params.m_status_output = params.m_debug;
+      params.m_read_source_images = false;
+      params.m_write_output_basis_or_ktx2_files = false;
+      
+      basis_compressor comp;
+      if (!comp.init(params)) {
+        promise.set_value(std::move(result));
+        return;
+      }
+      
+      basis_compressor::error_code ec = comp.process();
+      if (ec != basis_compressor::cECSuccess) {
+        promise.set_value(std::move(result));
+        return;
+      }
+      
+      if (params.m_create_ktx2_file) {
+        auto output = comp.get_output_ktx2_file();
+        if (!output.data()) {
+          promise.set_value(std::move(result));
+          return;
+        }
+        result.data.assign(output.data(), output.data() + output.size());
+      } else {
+        auto output = comp.get_output_basis_file();
+        if (!output.data()) {
+          promise.set_value(std::move(result));
+          return;
+        }
+        result.data.assign(output.data(), output.data() + output.size());
+      }
+      
+      result.success = true;
+      promise.set_value(std::move(result));
+    } catch (...) {
+      try {
+        promise.set_exception(std::current_exception());
+      } catch (...) {}
+    }
+  });
+  
+  encodingThread.detach();
+  
+  try {
+    auto result = resultFuture.get();
+    if (!result.success) {
       return 0;
     }
-
+    
+    auto arrayBuffer = basisFileData.getArrayBuffer(rt);
     auto outputBuffer = jsi::ArrayBuffer(std::move(arrayBuffer));
-    memcpy(outputBuffer.data(rt), output.data(), output.size());
+    memcpy(outputBuffer.data(rt), result.data.data(), result.data.size());
     basisFileData.setProperty(rt, jsi::PropNameID::forAscii(rt, "buffer"), outputBuffer);
-
-
-    // Return the file size of the .basis file in bytes.
-    return (uint32_t)comp.get_output_ktx2_file().size();
+    return result.data.size();
+  } catch (const std::exception& e) {
+    throw jsi::JSError(rt, e.what());
   }
-  else
-  {
-    auto output = comp.get_output_basis_file();
-
-    if (!output.data()) {
-      return 0;
-    }
-
-    // Compression succeeded, so copy the .basis file bytes to the caller's buffer.
-    auto outputBuffer = jsi::ArrayBuffer(std::move(arrayBuffer));
-    memcpy(outputBuffer.data(rt), output.data(), output.size());
-    basisFileData.setProperty(rt, jsi::PropNameID::forAscii(rt, "buffer"), outputBuffer);
-
-    // Return the file size of the .basis file in bytes.
-    return (uint32_t)comp.get_output_basis_file().size();
-  }
-
-  return 0;
 }
+
 
 void ReactNativeBasisUniversal::setKTX2UASTCSupercompression(jsi::Runtime &rt, jsi::Object handle, bool flag) {
   auto encoder = tryGetBasisEncoder(rt, handle);
@@ -215,6 +229,7 @@ bool ReactNativeBasisUniversal::setSliceSourceImage(jsi::Runtime &rt, jsi::Objec
 
   return true;
 }
+
 
 bool ReactNativeBasisUniversal::setSliceSourceImageHDR(jsi::Runtime &rt, jsi::Object handle, int sliceIndex, jsi::Object imageArray, int width, int height, int imgType, bool ldrSrgbToLinear) {
   if (!imageArray.isArrayBuffer(rt)) {
@@ -407,15 +422,47 @@ int ReactNativeBasisUniversal::getImageTranscodedSizeInBytes(jsi::Runtime &rt, j
 
 int ReactNativeBasisUniversal::transcodeImage(jsi::Runtime &rt, jsi::Object handle, jsi::Object dst, int levelIndex, int layerIndex, int faceIndex, int format, int getAlphaForOpaqueFormats, int channel0, int channel1) {
   auto ktx2Handle = tryGetKTX2Handle(rt, handle);
-  return ktx2Handle->transcodeImage(rt,
-                             dst,
-                             levelIndex,
-                             layerIndex,
-                             faceIndex,
-                             format,
-                             getAlphaForOpaqueFormats,
-                             channel0,
-                             channel1);
+  
+  std::promise<int> resultPromise;
+  std::future<int> resultFuture = resultPromise.get_future();
+  
+  std::thread transcodingThread([
+    this,
+    ktx2Handle = ktx2Handle,
+    promise = std::move(resultPromise),
+    &rt,
+    &dst,
+    levelIndex,
+    layerIndex,
+    faceIndex,
+    format,
+    getAlphaForOpaqueFormats,
+    channel0,
+    channel1
+  ]() mutable {
+    try {
+      auto res = ktx2Handle->transcodeImage(rt,
+                                            dst,
+                                            levelIndex,
+                                            layerIndex,
+                                            faceIndex,
+                                            format,
+                                            getAlphaForOpaqueFormats,
+                                            channel0,
+                                            channel1);
+      promise.set_value(res);
+    } catch (...) {
+      promise.set_exception(std::current_exception());
+    }
+  });
+  
+  transcodingThread.detach();
+  
+  try {
+    return resultFuture.get();
+  } catch (const std::exception& e) {
+    throw jsi::JSError(rt, e.what());
+  }
 }
 
 
@@ -506,7 +553,5 @@ jsi::Object ReactNativeBasisUniversal::getImageLevelDescBasisFile(jsi::Runtime &
   // TODO: Implement getImageLevelDescBasisFile (Not used in IREngine)
   return jsi::Object(rt);
 }
-
-
 
 }
